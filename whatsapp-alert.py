@@ -1,7 +1,6 @@
 import os
 from twilio.rest import Client
 import toml
-import pywhatkit
 
 with open('config.toml', 'r') as f:
     config = toml.load(f)
