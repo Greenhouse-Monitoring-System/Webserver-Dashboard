@@ -1,6 +1,7 @@
 from flask import *
 import json
 import os
+import time
 
 app = Flask(__name__)
 conditions_file = "conditions.json"
@@ -35,6 +36,7 @@ def display_conditions():
     if request.method == "POST":
         #update and save
         new_data = {
+            "time" : time.time(),
             "temperature" : float(request.form["temperature"]),
             "humidity" : float(request.form["humidity"]),
             "water_level" : float(request.form["water_level"]),
@@ -54,6 +56,15 @@ def display_conditions():
         
     #pass intance to template 
     return render_template("conditions.html", conditions= conditions_data)
+
+@app.route("/get_current", methods=["GET"])
+def get_current_conditions():
+    if request.method == "GET":
+        conditions_data = load_conditions()
+        return jsonify({
+            "conditions": conditions_data,
+            "image_url": "http://127.0.0.1:8080/static/upload_imgs/current/now.jpg"  # Image hosted by Flask
+        })
 
 if __name__ == "__main__":
     app.run(port="8080", debug=True)

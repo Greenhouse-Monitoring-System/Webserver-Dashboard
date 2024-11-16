@@ -1,7 +1,8 @@
 {
-    "temperature": 4220.0,
-    "humidity": 200.0,
-    "water_level": 12.3,
-    "soil_moisture": 42.3,
-    "light_intensity": 600
+    "time": 1731734847.5711083,
+    "temperature": 25.0,
+    "humidity": 10.0,
+    "water_level": 15.0,
+    "soil_moisture": 1000.0,
+    "light_intensity": 44
 }
