@@ -5,14 +5,6 @@ import os
 app = Flask(__name__)
 conditions_file = "conditions.json"
 
-@app.route("/")
-def index():
-    return render_template("index.html")
-
-@app.route("/greenhouse")
-def greenhouse():
-    return render_template("greenhouse.html")
-
 #load conditions from JSON file
 def load_conditions():
     if os.path.exists(conditions_file):
@@ -23,12 +15,19 @@ def load_conditions():
         return {
             "temperature": 24.5,
             "humidity": 55.2,
-            "water_level": 12.3, 
+            "water_level": 12.3,
             "soil_moisture": 42.3,
             "light_intensity": 400
         }
-    
 
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+@app.route("/greenhouse_home")
+def greenhouse():
+    conditions_data = load_conditions()
+    return render_template("greenhouse.html", conditions= conditions_data)
 
 @app.route("/greenhouse/conditions", methods=["GET", "POST"])
 def display_conditions():
