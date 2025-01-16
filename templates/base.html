@@ -29,22 +29,36 @@
                                                                         style="padding-right: 5px;"></i>Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/greenhouse_home"><i class="bi bi-broadcast" style="padding-right: 5px;"></i>Greenhouse</a>
+                    <a class="nav-link" href="/greenhouse_home"><i class="bi bi-broadcast"
+                                                                   style="padding-right: 5px;"></i>Greenhouse</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/greenhouse_home"><i class="bi bi-gear-wide-connected" style="padding-right: 5px;"></i>Configuration</a>
+                    <a class="nav-link" href="/greenhouse_home"><i class="bi bi-gear-wide-connected"
+                                                                   style="padding-right: 5px;"></i>Configuration</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link disabled" href="/"><i class="bi bi-clock-history" style="padding-right: 5px;"></i>History</a>
+                    <a class="nav-link" href="/control"><i class="bi bi-toggles" style="padding-right: 5px;"></i>Control</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link disabled" href="/"><i class="bi bi-info-square-fill" style="padding-right: 5px;"></i>FAQ</a>
+                    <a class="nav-link disabled" href="/"><i class="bi bi-graph-up" style="padding-right: 5px;"></i>Statistics</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link disabled" aria-disabled="true">3</a>
+                    <a class="nav-link disabled" href="/"><i class="bi bi-clock-history"
+                                                             style="padding-right: 5px;"></i>History</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="/"><i class="bi bi-info-square-fill"
+                                                             style="padding-right: 5px;"></i>FAQ</a>
                 </li>
             </ul>
-
+            <span class="ml-auto navbar-text">
+                <span class="btn text-bg-outline-secondary">
+                  <strong>GMS Status:</strong>
+                    <span id="gms-status-badge" class="badge text-bg-secondary">
+                        Loading...
+                    </span>
+                </span>
+            </span>
         </div>
     </div>
 </nav>
@@ -54,5 +68,25 @@
     {% endblock %}
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function fetchGmsStatus() {
+        fetch('/gms_status')
+            .then(response => response.json())
+            .then(data => {
+                const badge = document.getElementById('gms-status-badge');
+                badge.textContent = data.status;
+                badge.className = data.status === "UP" ? "badge text-bg-success" : "badge text-bg-danger";
+            })
+            .catch(err => {
+                console.error("Error fetching GMS status:", err);
+            });
+    }
+
+    // Fetch GMS status every 5 seconds
+    setInterval(fetchGmsStatus, 5000);
+
+    // Fetch on page load
+    fetchGmsStatus();
+</script>
 </body>
 </html>

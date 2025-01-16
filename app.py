@@ -2,9 +2,20 @@ from flask import *
 import json
 import os
 import time
+import tomllib
+import requests
+import threading
+
+with open("config.toml", "rb") as f:
+    config = tomllib.load(f)
 
 app = Flask(__name__)
-conditions_file = "conditions.json"
+conditions_file = config["json"]["CONDITIONS"]
+currentData = config["json"]["DATA"]
+
+gms_url= config["url"]["GMS"]
+
+gms_status = "UNKNOWN"
 
 #load conditions from JSON file
 def load_conditions():
@@ -20,6 +31,32 @@ def load_conditions():
             "soil_moisture": 42.3,
             "light_intensity": 400
         }
+
+def check_gms_status():
+    try:
+        response = requests.get(f"http://{gms_url}/api/ping", timeout=10)
+        if response.status_code == 200:
+            print("UP")
+            return "UP"
+    except requests.RequestException:
+        pass
+    print("DOWN")
+    return "DOWN"
+
+def update_gms_status():
+    global gms_status
+    while True:
+        gms_status = check_gms_status()
+        time.sleep(20)  # Check status every 15 seconds
+
+# @app.before_request
+# def add_gms_status():
+#     global gms_status
+#     gms_status = check_gms_status()
+
+@app.route("/gms_status", methods=["GET"])
+def get_gms_status():
+    return jsonify({"status": gms_status})
 
 @app.route("/")
 def index():
@@ -44,7 +81,7 @@ def display_conditions():
             "light_intensity" : int(request.form["light_intensity"])
         }
         
-        print("HERE ARE THE UPDATED CONDITIONSSSSSSS", conditions_data)
+        print("HERE ARE THE UPDATED CONDITIONS", conditions_data)
 
         # save updated data to JSON file
         with open(conditions_file, 'w') as file:
@@ -66,5 +103,58 @@ def get_current_conditions():
             "image_url": "http://127.0.0.1:8080/static/upload_imgs/current/now.jpg"  # Image hosted by Flask
         })
 
+@app.route("/control", methods=["GET"])
+def control_page():
+    conditions_data = load_conditions()
+    motor_state = conditions_data.get("motor_state", "OFF")
+    fan_state = conditions_data.get("fan_state", "OFF")
+    return render_template("control.html", motor_state=motor_state, fan_state=fan_state)
+
+@app.route("/toggle_device", methods=["POST"])
+def toggle_device():
+    # Load current conditions
+    conditions_data = load_conditions()
+
+    # Get the device name from the request
+    device = request.json.get("device")
+    if device not in ["water_pump", "ventilation"]:
+        return jsonify({"error": "Invalid device"}), 400
+
+    # Determine the target GMS endpoint for the device
+    gms_endpoint = f"http://{gms_url}/api/controls/{device}"
+
+    # Toggle the state of the selected device
+    try:
+        # Get the current state from conditions.json
+        current_state = conditions_data.get(f"{device}_state", "OFF")
+        new_state = "ON" if current_state == "OFF" else "OFF"
+
+        # Send the toggle request to the GMS API
+        response = requests.put(gms_endpoint, json={"state": new_state}, timeout=10)
+
+        if response.status_code == 200:
+            print("I got here")
+            # Update the state locally if the GMS API call is successful
+            conditions_data[f"{device}_state"] = new_state
+
+            # Save the updated state to the conditions file
+            with open(conditions_file, 'w') as file:
+                json.dump(conditions_data, file, indent=4)
+
+            return jsonify({
+                "device": device,
+                "new_state": new_state
+            })
+        else:
+            # Handle GMS API errors
+            return jsonify({"error": f"GMS API error: {response.status_code}"}), 500
+
+    except requests.RequestException as e:
+        return jsonify({"error": f"Failed to communicate with GMS: {str(e)}"}), 500
+
+
 if __name__ == "__main__":
+    status_thread = threading.Thread(target=update_gms_status, daemon=True)
+    status_thread.start()
+
     app.run(port="8080", debug=True)

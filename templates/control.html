@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Control Page{% endblock %}
+
+{% block content %}
+<h2>Greenhouse Control</h2>
+
+<div class="card mb-3">
+    <div class="card-body">
+        <h4>Water Irrigation Motor</h4>
+        <p>Current State: <strong id="water_pump-state">{{ motor_state }}</strong></p>
+        <button id="toggle-water_pump" class="btn btn-{{ 'success' if motor_state == 'OFF' else 'danger' }}">
+            {{ 'Turn ON' if motor_state == 'OFF' else 'Turn OFF' }}
+        </button>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <h4>Fan Motor</h4>
+        <p>Current State: <strong id="ventilation-state">{{ fan_state }}</strong></p>
+        <button id="toggle-ventilation" class="btn btn-{{ 'success' if fan_state == 'OFF' else 'danger' }}">
+            {{ 'Turn ON' if fan_state == 'OFF' else 'Turn OFF' }}
+        </button>
+    </div>
+</div>
+
+<script>
+    // Function to send toggle request
+    function toggleDevice(device) {
+        fetch('/toggle_device', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ device: device })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+            } else {
+                const stateElement = document.getElementById(`${device}-state`);
+                const buttonElement = document.getElementById(`toggle-${device}`);
+
+                // Update the state display
+                stateElement.textContent = data.new_state;
+
+                // Update the button appearance and text
+                buttonElement.textContent = data.new_state === 'OFF' ? 'Turn ON' : 'Turn OFF';
+                buttonElement.className = data.new_state === 'OFF' ? 'btn btn-success' : 'btn btn-danger';
+            }
+        })
+        .catch(error => {
+            console.error("Error toggling device:", error);
+            alert("Failed to toggle the device.");
+        });
+    }
+
+    // Attach click event handlers
+    document.getElementById('toggle-water_pump').addEventListener('click', () => toggleDevice('water_pump'));
+    document.getElementById('toggle-ventilation').addEventListener('click', () => toggleDevice('ventilation'));
+</script>
+
+{% endblock %}

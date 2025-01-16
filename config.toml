@@ -1,0 +1,6 @@
+[url]
+GMS="192.168.137.109:5000"
+
+[json]
+CONDITIONS="conditions.json"
+DATA="current-data.json"

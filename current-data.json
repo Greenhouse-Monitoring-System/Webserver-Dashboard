@@ -6,7 +6,5 @@
     "soil_moisture": 1000.0,
     "light_intensity": 44,
     "motor_state": "OFF",
-    "fan_state": "OFF",
-    "water_pump_state": "OFF",
-    "ventilation_state": "OFF"
+    "fan_state": "OFF"
 }
