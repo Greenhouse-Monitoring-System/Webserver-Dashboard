@@ -1,10 +1,9 @@
 {
-    "time": 1731734847.5711083,
-    "temperature": 25.0,
-    "humidity": 10.0,
-    "water_level": 15.0,
-    "soil_moisture": 1000.0,
-    "light_intensity": 44,
-    "motor_state": "OFF",
-    "fan_state": "OFF"
+    "co2": 0.0,
+    "distance": 36,
+    "humidity": 41.0,
+    "soilMoisture": 1,
+    "temperature": 19.0,
+    "timestamp": "2025-01-16 22:15:52",
+    "tvoc": 400.0
 }

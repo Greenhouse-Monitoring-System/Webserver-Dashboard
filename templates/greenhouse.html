@@ -15,7 +15,6 @@
             </div>
             Current View
         </h5>
-        <!--<p class="card-text"><small>Last updated 3 mins ago</small></p>-->
         <p class="card-text"><small id="timeCounter">Last updated 0 seconds ago</small></p>
     </div>
 </div>
@@ -33,33 +32,108 @@
         <th>Value</th>
     </tr>
     </thead>
-    <tbody>
-    {% for param, value in conditions.items() %}
-    <tr>
-        <td>{{ param.replace('_', ' ').title() }}</td>
-        <td>{{ value }}</td>
-    </tr>
-    {% endfor %}
+    <tbody id="liveStats">
+    <!-- Display each condition in the desired order -->
+        <tr>
+            <td>Temperature</td>
+            <td>{{ conditions.temperature }} °C</td>
+        </tr>
+        <tr>
+            <td>Humidity</td>
+            <td>{{ conditions.humidity }} %</td>
+        </tr>
+        <tr>
+            <td>CO2</td>
+            <td>{{ conditions.co2 }} PPM</td>
+        </tr>
+        <tr>
+            <td>TVOC</td>
+            <td>{{ conditions.tvoc }} PPM</td>
+        </tr>
+        <tr>
+            <td>Water Level</td>
+            <td>{{ conditions.distance }} %</td>
+        </tr>
+        <tr>
+            <td>Soil Moisture</td>
+            <td>
+                {% if conditions.soilMoisture == 1 %}
+                Dry
+                {% elif conditions.soilMoisture == 0 %}
+                Wet
+                {% else %}
+                Unknown
+                {% endif %}
+            </td>
+        </tr>
     </tbody>
 </table>
 
-<a href="/greenhouse/conditions" class="btn btn-primary">Check Conditions</a>
+<!--<a href="/greenhouse/conditions" class="btn btn-primary">Check Conditions</a>-->
 
 <script>
     let startTime = new Date().getTime(); // Record the time when the page loads
 
     function updateTime() {
-      let now = new Date().getTime(); // Get current time
-      let elapsed = Math.floor((now - startTime) / 1000); // Time in seconds since page load
+        let now = new Date().getTime(); // Get current time
+        let elapsed = Math.floor((now - startTime) / 1000); // Time in seconds since page load
 
-      let minutes = Math.floor(elapsed / 60); // Convert seconds to minutes
-      let seconds = elapsed; // Get remaining seconds
+        // Update the timeCounter element with the new time
+        document.getElementById('timeCounter').innerText = `Last updated ${elapsed} seconds ago`;
+    }
 
-      // Update the timeCounter element with the new time
-      document.getElementById('timeCounter').innerText = `${seconds} seconds ago`;
+    // Fetch the latest sensor data and update the table
+    function fetchLiveStats() {
+        fetch('/get_current') // Endpoint to fetch the latest sensor data
+            .then(response => response.json())
+            .then(data => {
+                if (data.conditions) {
+                    const conditions = data.conditions;
+
+                    // Update table rows manually
+                    document.querySelector("#liveStats").innerHTML = `
+                        <tr>
+                            <td>Temperature</td>
+                            <td>${ conditions.temperature } °C</td>
+                        </tr>
+                        <tr>
+                            <td>Humidity</td>
+                            <td>${ conditions.humidity } %</td>
+                        </tr>
+                        <tr>
+                            <td>CO2</td>
+                            <td>${ conditions.co2 } PPM</td>
+                        </tr>
+                        <tr>
+                            <td>TVOC</td>
+                            <td>${ conditions.tvoc } PPM</td>
+                        </tr>
+                        <tr>
+                            <td>Water Level</td>
+                            <td>${ conditions.distance } %</td>
+                        </tr>
+                        <tr><td>Soil Moisture</td><td>${conditions.soilMoisture === 1 ? "Dry" : conditions.soilMoisture === 0 ? "Wet" : "Unknown"}</td></tr>
+                    `;
+
+                    // Reset the timer
+                    startTime = new Date().getTime();
+                } else {
+                    console.error("Error: No conditions in response");
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching live stats:", error);
+            });
     }
 
     // Update the counter every second
     setInterval(updateTime, 1000);
+
+    // Fetch live stats every 10 seconds
+    setInterval(fetchLiveStats, 10000);
+
+    // Fetch live stats immediately on page load
+    fetchLiveStats();
 </script>
+
 {% endblock %}
