@@ -95,6 +95,10 @@ def tips():
 def config():
     return render_template("configuration.html")
 
+@app.route("/assistant")
+def assistant():
+    return render_template("assistant.html")
+
 @app.route("/greenhouse_home")
 def greenhouse():
     conditions_data = load_currentData()

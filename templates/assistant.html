@@ -1,0 +1,419 @@
+{% extends "base.html" %}
+
+{% block title %}Greenhouse Homepage{% endblock %}
+
+{% block content %}
+  <div class="container">
+
+    <div class="sidebar">
+      <h2>Available Commands</h2>
+      <ul>
+        <li><strong>"How do I plant [plant name]?"</strong> - Planting instructions.</li>
+        <li><strong>"How often should I water [plant name]?"</strong> - Watering tips.</li>
+        <li><strong>"What's the ideal temperature for [plant name]?"</strong> - Temperature guidelines.</li>
+        <li><strong>"How do I harvest [plant name]?"</strong> - Harvesting instructions.</li>
+        <li><strong>"How do I fertilize [plant name]?"</strong> - Fertilization tips.</li>
+        <li><strong>"How do I prune [plant name]?"</strong> - Pruning instructions.</li>
+        <li><strong>"How do I control pests on [plant name]?"</strong> - Pest control advice.</li>
+        <li><strong>"What's the best soil for [plant name]?"</strong> - Soil recommendations.</li>
+        <li><strong>"How much sunlight does [plant name] need?"</strong> - Sunlight requirements.</li>
+        <li><strong>"How do I transplant [plant name]?"</strong> - Transplanting guide.</li>
+        <li><strong>"How do I mulch [plant name]?"</strong> - Mulching tips.</li>
+        <li><strong>"How do I compost?"</strong> - Composting guide.</li>
+        <li><strong>"Add reminder: [reminder text]"</strong> - Add a new reminder.</li>
+      </ul>
+    </div>
+
+    <div class="main-content">
+      <h1>Virtual Greenhouse Assistant</h1>
+
+      <div class="chatbot">
+        <h2>Chatbot</h2>
+        <div class="chat-output" id="chat-output">
+          <p>Welcome to the Virtual Greenhouse Assistant! How can I help you today?</p>
+        </div>
+        <form class="interactive-form" onsubmit="return false;">
+          <input type="text" id="user-input" placeholder="Ask a question...">
+          <button type="submit" onclick="sendMessage()">Send</button>
+        </form>
+      </div>
+
+      <div class="guides">
+        <h2>Step-by-Step Guides</h2>
+        <details>
+          <summary>How to Plant Seeds</summary>
+          <ol>
+            <li>Choose the right soil mix for your plant.</li>
+            <li>Fill seed trays with soil.</li>
+            <li>Plant seeds at the recommended depth.</li>
+            <li>Water gently and place in a warm, well-lit area.</li>
+          </ol>
+        </details>
+        <details>
+          <summary>How to Harvest Crops</summary>
+          <ol>
+            <li>Check for ripeness (e.g., color, firmness).</li>
+            <li>Use clean, sharp tools to avoid damaging plants.</li>
+            <li>Harvest in the morning for the best flavor.</li>
+          </ol>
+        </details>
+        <details>
+          <summary>How to Control Pests</summary>
+          <ol>
+            <li>Identify the type of pest (e.g., aphids, spider mites).</li>
+            <li>Use natural remedies like neem oil or insecticidal soap.</li>
+            <li>Remove affected leaves and keep the area clean.</li>
+            <li>Introduce beneficial insects like ladybugs if necessary.</li>
+          </ol>
+        </details>
+        <details>
+          <summary>How to Fertilize Plants</summary>
+          <ol>
+            <li>Choose a balanced fertilizer suitable for your plants.</li>
+            <li>Apply fertilizer every 4-6 weeks during the growing season.</li>
+            <li>Water the plants after fertilizing to help nutrients absorb.</li>
+            <li>Avoid over-fertilizing, as it can harm the plants.</li>
+          </ol>
+        </details>
+        <details>
+          <summary>How to Prune Plants</summary>
+          <ol>
+            <li>Use clean, sharp pruning shears.</li>
+            <li>Remove dead or diseased branches first.</li>
+            <li>Trim overgrown branches to maintain shape.</li>
+            <li>Prune during the plant's dormant season for best results.</li>
+          </ol>
+        </details>
+        <details>
+          <summary>How to Compost</summary>
+          <ol>
+            <li>Choose a compost bin or pile location.</li>
+            <li>Add a mix of green (e.g., vegetable scraps) and brown (e.g., dry leaves) materials.</li>
+            <li>Turn the compost regularly to aerate it.</li>
+            <li>Keep the compost moist but not soggy.</li>
+            <li>Wait 2-6 months for the compost to mature.</li>
+          </ol>
+        </details>
+      </div>
+
+      <div class="reminders">
+        <h2>Reminders</h2>
+        <div class="notification">
+          <strong>Reminder:</strong> Water your tomatoes tomorrow.
+        </div>
+        <div class="notification">
+          <strong>Reminder:</strong> Check the temperature in the greenhouse.
+        </div>
+        <form class="interactive-form" onsubmit="return false;">
+          <input type="text" id="new-reminder" placeholder="Add a new reminder...">
+          <button type="submit" onclick="addReminder()">Add</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Chatbot Functionality
+    function sendMessage() {
+      const userInput = document.getElementById('user-input').value;
+      const chatOutput = document.getElementById('chat-output');
+
+      if (userInput.trim() === "") return;
+
+      // Display user's message
+      chatOutput.innerHTML += `<p><strong>You:</strong> ${userInput}</p>`;
+
+      // Simulate chatbot response
+      let response = "I'm sorry, I don't understand that. Can you rephrase?";
+      if (userInput.toLowerCase().includes("how do i plant")) {
+        response = "To plant, follow these steps: 1) Choose the right soil. 2) Fill seed trays. 3) Plant seeds at the recommended depth. 4) Water gently.";
+      } else if (userInput.toLowerCase().includes("how often should i water")) {
+        response = "Most plants need watering every 2-3 days. Check the soil moisture to be sure.";
+      }else if (userInput.toLowerCase().includes("hello")) {
+        response = "Hello, How is your day going?";
+      }
+      else if (userInput.toLowerCase().includes("hi")) {
+        response = "Hello, How is your day going?";
+      }
+      else if (userInput.toLowerCase().includes("how are you")) {
+        response = "I'm doing great thanks, and you?";
+      }
+      else if (userInput.toLowerCase().includes("good")) {
+        response = "I'm glad you're doing good, How can I help you today?.";
+      }else if (userInput.toLowerCase().includes("good thanks")) {
+        response = "I'm glad you're doing good, How can I help you today?.";
+      }
+      else if (userInput.toLowerCase().includes("great")) {
+        response = "I'm glad you're doing good, How can I help you today?.";
+      }
+      else if (userInput.toLowerCase().includes("ideal temperature")) {
+        response = "The ideal temperature for most plants is between 65-75°F (18-24°C).";
+      } else if (userInput.toLowerCase().includes("how do i harvest")) {
+        response = "To harvest, follow these steps: 1) Check for ripeness. 2) Use clean, sharp tools. 3) Harvest in the morning for the best flavor.";
+      } else if (userInput.toLowerCase().includes("how do i fertilize")) {
+        response = "Fertilize your plants every 4-6 weeks during the growing season. Use a balanced fertilizer for best results.";
+      } else if (userInput.toLowerCase().includes("how do i prune")) {
+        response = "Prune your plants by removing dead or overgrown branches. Use clean, sharp tools to avoid damaging the plant.";
+      } else if (userInput.toLowerCase().includes("how do i control pests")) {
+        response = "For pest control, try natural remedies like neem oil or insecticidal soap. Remove affected leaves and keep the area clean.";
+      } else if (userInput.toLowerCase().includes("best soil for")) {
+        response = "Most plants thrive in well-draining soil with organic matter. For specific plants, check their soil preferences.";
+      } else if (userInput.toLowerCase().includes("how much sunlight")) {
+        response = "Most plants need 6-8 hours of sunlight per day. Some shade-loving plants prefer indirect light.";
+      } else if (userInput.toLowerCase().includes("how do i transplant")) {
+        response = "To transplant, follow these steps: 1) Water the plant thoroughly. 2) Dig a hole in the new location. 3) Carefully move the plant. 4) Water again after transplanting.";
+      } else if (userInput.toLowerCase().includes("how do i mulch")) {
+        response = "To mulch, spread a 2-3 inch layer of organic mulch (e.g., wood chips) around the base of the plant. Avoid piling mulch against the stem.";
+      } else if (userInput.toLowerCase().includes("how do i compost")) {
+        response = "To compost, mix green (e.g., vegetable scraps) and brown (e.g., dry leaves) materials. Turn the pile regularly and keep it moist.";
+      } else if (userInput.toLowerCase().startsWith("add reminder:")) {
+        const reminderText = userInput.replace("add reminder:", "").trim();
+        if (reminderText) {
+          addReminder(reminderText);
+          response = `Reminder added: "${reminderText}"`;
+        }
+      }
+
+      // Display chatbot's response
+      chatOutput.innerHTML += `<p><strong>Assistant:</strong> ${response}</p>`;
+
+      // Clear input field
+      document.getElementById('user-input').value = "";
+
+      // Scroll to bottom of chat
+      chatOutput.scrollTop = chatOutput.scrollHeight;
+    }
+
+    // Reminders Functionality
+    function addReminder(reminderText) {
+      if (!reminderText) {
+        reminderText = document.getElementById('new-reminder').value;
+      }
+      if (reminderText) {
+        const remindersSection = document.querySelector('.reminders');
+        const newNotification = document.createElement('div');
+        newNotification.className = 'notification';
+        newNotification.innerHTML = `<strong>Reminder:</strong> ${reminderText}`;
+        remindersSection.insertBefore(newNotification, remindersSection.lastElementChild);
+        document.getElementById('new-reminder').value = "";
+      }
+    }
+  </script>
+
+  <style>
+    /* Global Styles */
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #e0f7fa, #c8e6c9);
+      margin: 0;
+      padding: 0;
+      color: #2e7d32;
+    }
+
+    .container {
+      display: flex;
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #2e7d32;
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      color: #2e7d32;
+      font-size: 1.8rem;
+      margin-bottom: 15px;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
+      margin-right: 20px;
+      padding: 20px;
+      background: #f9f9f9;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .sidebar ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    .sidebar li {
+      margin: 10px 0;
+      font-size: 0.9rem;
+      color: #555;
+      padding: 10px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .sidebar li:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+    }
+
+    /* Chatbot Section */
+    .chatbot {
+      border: 1px solid #ddd;
+      padding: 20px;
+      border-radius: 12px;
+      background: #f9f9f9;
+      margin-bottom: 20px;
+    }
+
+    .chat-output {
+      margin-top: 10px;
+      height: 150px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      padding: 10px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .chat-output p {
+      margin: 5px 0;
+    }
+
+    .chatbot input {
+      width: calc(100% - 90px);
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+    }
+
+    .chatbot input:focus {
+      border-color: #2e7d32;
+      outline: none;
+    }
+
+    .chatbot button {
+      width: 80px;
+      padding: 10px;
+      background: #2e7d32;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .chatbot button:hover {
+      background: #1b5e20;
+      transform: translateY(-2px);
+    }
+
+    /* Step-by-Step Guides */
+    .guides details {
+      margin: 10px 0;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background: #f9f9f9;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .guides details:hover {
+      background: #e0f7fa;
+      transform: translateY(-2px);
+    }
+
+    .guides summary {
+      font-weight: bold;
+      cursor: pointer;
+      color: #2e7d32;
+      padding: 10px;
+      border-radius: 8px;
+      transition: color 0.3s ease;
+    }
+
+    .guides details[open] summary {
+      color: #1b5e20;
+    }
+
+    .guides ol {
+      padding-left: 20px;
+    }
+
+    .guides li {
+      margin: 5px 0;
+    }
+
+    /* Reminders Section */
+    .reminders {
+      margin-top: 20px;
+    }
+
+    .notification {
+      padding: 10px;
+      background: #fff3e0;
+      border: 1px solid #ffe0b2;
+      border-radius: 8px;
+      margin: 10px 0;
+      animation: fadeIn 0.5s ease;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .notification:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .interactive-form input[type="text"] {
+      width: calc(100% - 90px);
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+    }
+
+    .interactive-form input[type="text"]:focus {
+      border-color: #2e7d32;
+      outline: none;
+    }
+
+    .interactive-form button {
+      width: 80px;
+      padding: 10px;
+      background: #2e7d32;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .interactive-form button:hover {
+      background: #1b5e20;
+      transform: translateY(-2px);
+    }
+  </style>
+{% endblock %}
