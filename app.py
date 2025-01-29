@@ -87,6 +87,10 @@ def get_gms_status():
 def index():
     return render_template("index.html")
 
+@app.route("/tips")
+def tips():
+    return render_template("tips.html")
+
 @app.route("/greenhouse_home")
 def greenhouse():
     conditions_data = load_currentData()
