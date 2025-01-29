@@ -91,6 +91,10 @@ def index():
 def tips():
     return render_template("tips.html")
 
+@app.route("/config")
+def config():
+    return render_template("configuration.html")
+
 @app.route("/greenhouse_home")
 def greenhouse():
     conditions_data = load_currentData()

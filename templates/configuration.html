@@ -1,0 +1,326 @@
+{% extends "base.html" %}
+
+{% block title %}Greenhouse Homepage{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 bg-light p-4 border-end">
+            <h4 class="text-success mb-4">🌱 Plant Information</h4>
+            <div id="plantInfo" class="mb-4">
+                <p class="text-muted">Select a plant to view detailed information.</p>
+            </div>
+            <hr>
+            <h4 class="text-success mb-4">📊 Quick Stats</h4>
+            <ul class="list-group">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Total Plants
+                    <span class="badge bg-success rounded-pill">1</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Active Sensors
+                    <span class="badge bg-success rounded-pill">6</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    Alerts
+                    <span class="badge bg-danger rounded-pill">0</span>
+                </li>
+            </ul>
+            <hr>
+            <h4 class="text-success mb-4">📅 Recent Activity</h4>
+            <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                        <small class="text-muted">3 minutes ago</small>
+                    </div>
+                    <p class="mb-1">Water level updated for Tomatoes.</p>
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                        <small class="text-muted">10 minutes ago</small>
+                    </div>
+                    <p class="mb-1">Soil moisture adjusted for Strawberries.</p>
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 p-5">
+            <div class="text-center mb-5">
+                <h1 class="display-4 fw-bold text-success gradient-text">Your Greenhouse, Your Control!</h1>
+                <p class="lead text-muted">Monitor and manage your greenhouse in real-time.</p>
+                <select id="plantSelector" class="form-select form-select-lg mb-3 w-50 mx-auto shadow-sm" aria-label="Select plant">
+                    <option value="tomatoes">Tomatoes</option>
+                    <option value="potatoes">Potatoes</option>
+                    <option value="lettuce">Lettuce</option>
+                    <option value="strawberries">Strawberries</option>
+                    <option value="cucumbers">Cucumbers</option>
+                    <option value="peppers">Peppers</option>
+                    <option value="carrots">Carrots</option>
+                    <option value="basil">Basil</option>
+                    <option value="rosemary">Rosemary</option>
+                    <option value="mint">Mint</option>
+                </select>
+            </div>
+
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-success text-white d-flex align-items-center py-3">
+                    <div class="spinner-grow spinner-grow-sm me-2" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <h5 class="card-title mb-0">Live Stats</h5>
+                    <span id="timeCounter" class="ms-auto small">Last updated 0 seconds ago</span>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr class="table-success">
+                                <th>Parameter</th>
+                                <th>Value</th>
+                                <th>Threshold</th>
+                            </tr>
+                        </thead>
+                        <tbody id="liveStats">
+                            <tr>
+                                <td>Temperature</td>
+                                <td id="temperatureValue">N/A</td>
+                                <td id="temperatureThreshold"></td>
+                            </tr>
+                            <tr>
+                                <td>Humidity</td>
+                                <td id="humidityValue">N/A</td>
+                                <td id="humidityThreshold"></td>
+                            </tr>
+                            <tr>
+                                <td>CO2</td>
+                                <td id="co2Value">N/A</td>
+                                <td id="co2Threshold"></td>
+                            </tr>
+                            <tr>
+                                <td>TVOC</td>
+                                <td id="tvocValue">N/A</td>
+                                <td id="tvocThreshold"></td>
+                            </tr>
+                            <tr>
+                                <td>Water Level</td>
+                                <td id="waterLevelValue">N/A</td>
+                                <td id="waterLevelThreshold"></td>
+                            </tr>
+                            <tr>
+                                <td>Soil Moisture</td>
+                                <td id="soilMoistureValue">N/A</td>
+                                <td id="soilMoistureThreshold"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .gradient-text {
+        background: linear-gradient(45deg, #28a745, #20c997);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .card {
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    .card-header {
+        background: linear-gradient(45deg, #28a745, #20c997);
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: rgba(40, 167, 69, 0.1);
+        transition: background-color 0.3s ease;
+    }
+
+    .badge {
+        font-size: 0.9em;
+        padding: 0.5em 0.75em;
+    }
+
+    .form-select {
+        border: 2px solid #28a745;
+        border-radius: 10px;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .form-select:focus {
+        border-color: #20c997;
+        box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.25);
+    }
+
+    .sidebar {
+        height: 100vh;
+        overflow-y: auto;
+    }
+</style>
+
+<script>
+    const plantConfigurations = {
+        tomatoes: {
+            temperature: { min: 20, max: 25 },
+            humidity: { min: 60, max: 70 },
+            co2: { min: 800, max: 1200 },
+            tvoc: { min: 0, max: 500 },
+            waterLevel: { min: 50, max: 100 },
+            soilMoisture: 'wet',
+            info: "Tomatoes thrive in warm, sunny conditions. Keep soil moist but not waterlogged."
+        },
+        potatoes: {
+            temperature: { min: 15, max: 20 },
+            humidity: { min: 50, max: 60 },
+            co2: { min: 600, max: 1000 },
+            tvoc: { min: 0, max: 400 },
+            waterLevel: { min: 40, max: 90 },
+            soilMoisture: 'moist',
+            info: "Potatoes prefer cooler temperatures and well-drained soil."
+        },
+        lettuce: {
+            temperature: { min: 16, max: 22 },
+            humidity: { min: 55, max: 65 },
+            co2: { min: 700, max: 1100 },
+            tvoc: { min: 0, max: 450 },
+            waterLevel: { min: 60, max: 100 },
+            soilMoisture: 'moist',
+            info: "Lettuce grows best in cool, humid environments with consistent moisture."
+        },
+        strawberries: {
+            temperature: { min: 18, max: 24 },
+            humidity: { min: 65, max: 75 },
+            co2: { min: 750, max: 1150 },
+            tvoc: { min: 0, max: 400 },
+            waterLevel: { min: 55, max: 95 },
+            soilMoisture: 'wet',
+            info: "Strawberries need plenty of sunlight and well-drained, slightly acidic soil."
+        },
+        cucumbers: {
+            temperature: { min: 21, max: 27 },
+            humidity: { min: 70, max: 80 },
+            co2: { min: 850, max: 1250 },
+            tvoc: { min: 0, max: 550 },
+            waterLevel: { min: 65, max: 110 },
+            soilMoisture: 'wet',
+            info: "Cucumbers require warm temperatures and consistent watering."
+        },
+        peppers: {
+            temperature: { min: 22, max: 28 },
+            humidity: { min: 60, max: 70 },
+            co2: { min: 800, max: 1200 },
+            tvoc: { min: 0, max: 500 },
+            waterLevel: { min: 50, max: 100 },
+            soilMoisture: 'moist',
+            info: "Peppers love heat and require well-drained soil."
+        },
+        carrots: {
+            temperature: { min: 15, max: 20 },
+            humidity: { min: 50, max: 60 },
+            co2: { min: 600, max: 1000 },
+            tvoc: { min: 0, max: 400 },
+            waterLevel: { min: 40, max: 90 },
+            soilMoisture: 'moist',
+            info: "Carrots grow best in loose, sandy soil with consistent moisture."
+        },
+        basil: {
+            temperature: { min: 18, max: 24 },
+            humidity: { min: 60, max: 70 },
+            co2: { min: 700, max: 1100 },
+            tvoc: { min: 0, max: 450 },
+            waterLevel: { min: 50, max: 100 },
+            soilMoisture: 'moist',
+            info: "Basil thrives in warm, sunny conditions with regular watering."
+        },
+        rosemary: {
+            temperature: { min: 20, max: 25 },
+            humidity: { min: 50, max: 60 },
+            co2: { min: 600, max: 1000 },
+            tvoc: { min: 0, max: 400 },
+            waterLevel: { min: 40, max: 80 },
+            soilMoisture: 'dry',
+            info: "Rosemary prefers dry, well-drained soil and plenty of sunlight."
+        },
+        mint: {
+            temperature: { min: 18, max: 22 },
+            humidity: { min: 60, max: 70 },
+            co2: { min: 700, max: 1100 },
+            tvoc: { min: 0, max: 450 },
+            waterLevel: { min: 50, max: 100 },
+            soilMoisture: 'moist',
+            info: "Mint grows best in moist, well-drained soil with partial shade."
+        }
+    };
+
+    let currentPlant = 'tomatoes';
+
+    function updateThresholds() {
+        const plant = plantConfigurations[currentPlant];
+        document.getElementById('temperatureThreshold').innerText = `${plant.temperature.min}°C - ${plant.temperature.max}°C`;
+        document.getElementById('humidityThreshold').innerText = `${plant.humidity.min}% - ${plant.humidity.max}%`;
+        document.getElementById('co2Threshold').innerText = `${plant.co2.min} PPM - ${plant.co2.max} PPM`;
+        document.getElementById('tvocThreshold').innerText = `${plant.tvoc.min} PPM - ${plant.tvoc.max} PPM`;
+        document.getElementById('waterLevelThreshold').innerText = `${plant.waterLevel.min}% - ${plant.waterLevel.max}%`;
+        document.getElementById('soilMoistureThreshold').innerText = plant.soilMoisture;
+
+        // Update plant info in sidebar
+        document.getElementById('plantInfo').innerHTML = `
+            <p class="text-success fw-bold">${currentPlant.charAt(0).toUpperCase() + currentPlant.slice(1)}</p>
+            <p class="text-muted">${plant.info}</p>
+        `;
+    }
+
+    function fetchLiveStats() {
+        fetch('/get_current')
+            .then(response => response.json())
+            .then(data => {
+                if (data.conditions) {
+                    const conditions = data.conditions;
+
+                    document.getElementById("temperatureValue").innerText = `${conditions.temperature} °C`;
+                    document.getElementById("humidityValue").innerText = `${conditions.humidity} %`;
+                    document.getElementById("co2Value").innerText = `${conditions.co2} PPM`;
+                    document.getElementById("tvocValue").innerText = `${conditions.tvoc} ppb`;
+                    document.getElementById("waterLevelValue").innerText = `${conditions.distance} %`;
+
+                    document.getElementById("soilMoistureValue").innerHTML =
+                        conditions.soilMoisture === 1
+                            ? '<span class="badge bg-danger">Dry</span>'
+                            : conditions.soilMoisture === 0
+                            ? '<span class="badge bg-success">Wet</span>'
+                            : '<span class="badge bg-secondary">Unknown</span>';
+
+                    updateThresholds();
+                    startTime = new Date().getTime();
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching live stats:", error);
+            });
+    }
+
+    document.getElementById('plantSelector').addEventListener('change', function(event) {
+        currentPlant = event.target.value;
+        updateThresholds();
+    });
+
+    updateThresholds();
+    fetchLiveStats();
+
+    let startTime = new Date().getTime();
+
+    function updateTime() {
+        let now = new Date().getTime();
+        let elapsed = Math.floor((now - startTime) / 1000);
+        document.getElementById('timeCounter').innerText = `Last updated ${elapsed} seconds ago`;
+    }
+
+    setInterval(updateTime, 1000);
+    setInterval(fetchLiveStats, 10000);
+</script>
+{% endblock %}
