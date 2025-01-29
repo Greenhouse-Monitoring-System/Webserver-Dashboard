@@ -4,26 +4,27 @@
 
 {% block content %}
 <div class="container mt-5">
-
-    <div class="text-center mb-5">
+   
+    <div class="text-center mb-5 animate__animated animate__fadeIn">
         <h1 class="display-4 fw-bold text-success">Welcome Back!</h1>
         <p class="lead text-muted">Monitor and manage your greenhouse in real-time.</p>
     </div>
 
-    <div class="card text-bg-dark mb-5 shadow-lg overflow-hidden" style="max-width: 50rem; margin: 0 auto;">
+
+    <div class="card text-bg-dark mb-5 shadow-lg overflow-hidden animate__animated animate__fadeInUp" style="max-width: 50rem; margin: 0 auto;">
         <img src="{{ url_for('static', filename='upload_imgs/current/now.jpg') }}" class="card-img" alt="current view" style="filter: brightness(0.8);">
         <div class="card-img-overlay d-flex flex-column justify-content-end p-4">
             <h5 class="card-title d-flex align-items-center text-white">
                 <div class="spinner-grow text-danger spinner-grow-sm me-2" role="status">
                     <span class="visually-hidden">Loading...</span>
                 </div>
-                Current View
+                <span class="animate__animated animate__pulse animate__infinite">Current View</span>
             </h5>
             <p class="card-text text-white-50"><small id="timeCounter">Last updated 0 seconds ago</small></p>
         </div>
     </div>
 
-    <div class="card shadow-sm border-0">
+    <div class="card shadow-sm border-0 animate__animated animate__fadeInUp">
         <div class="card-header bg-success text-white d-flex align-items-center py-3">
             <div class="spinner-grow spinner-grow-sm me-2" role="status">
                 <span class="visually-hidden">Loading...</span>
@@ -39,29 +40,32 @@
                     </tr>
                 </thead>
                 <tbody id="liveStats">
-
                     <tr>
-                        <td>Temperature</td>
+                        <td><i class="fas fa-thermometer-half me-2"></i>Temperature</td>
                         <td>{{ conditions.temperature }} °C</td>
                     </tr>
                     <tr>
-                        <td>Humidity</td>
+                        <td><i class="fas fa-tint me-2"></i>Humidity</td>
                         <td>{{ conditions.humidity }} %</td>
                     </tr>
                     <tr>
-                        <td>CO2</td>
+                        <td><i class="fas fa-wind me-2"></i>CO2</td>
                         <td>{{ conditions.co2 }} PPM</td>
                     </tr>
                     <tr>
-                        <td>TVOC</td>
+                        <td><i class="fas fa-smog me-2"></i>TVOC</td>
                         <td>{{ conditions.tvoc }} PPM</td>
                     </tr>
                     <tr>
-                        <td>Water Level</td>
-                        <td>{{ conditions.distance }} %</td>
+                        <td><i class="fas fa-glass-whiskey me-2"></i>Water Level</td>
+                        <td>
+                            <div class="progress" style="height: 25px;">
+                                <div class="progress-bar bg-info" role="progressbar" style="width: {{ conditions.distance }}%;" aria-valuenow="{{ conditions.distance }}" aria-valuemin="0" aria-valuemax="100">{{ conditions.distance }}%</div>
+                            </div>
+                        </td>
                     </tr>
                     <tr>
-                        <td>Soil Moisture</td>
+                        <td><i class="fas fa-seedling me-2"></i>Soil Moisture</td>
                         <td>
                             {% if conditions.soilMoisture == 1 %}
                             <span class="badge bg-danger">Dry</span>
@@ -77,11 +81,12 @@
         </div>
     </div>
 
+    <!-- Tips and Recent Activities Cards -->
     <div class="row mt-5">
         <div class="col-md-6 mb-4">
-            <div class="card h-100 shadow-sm border-0">
+            <div class="card h-100 shadow-sm border-0 animate__animated animate__fadeInLeft">
                 <div class="card-body">
-                    <h5 class="card-title text-success">Tips for Optimal Growth</h5>
+                    <h5 class="card-title text-success"><i class="fas fa-lightbulb me-2"></i>Tips for Optimal Growth</h5>
                     <p class="card-text text-muted">
                         Maintain a temperature between 18°C and 25°C, and ensure humidity levels stay between 40% and 60%.
                         Regularly check soil moisture and water levels to keep your plants healthy.
@@ -90,9 +95,9 @@
             </div>
         </div>
         <div class="col-md-6 mb-4">
-            <div class="card h-100 shadow-sm border-0">
+            <div class="card h-100 shadow-sm border-0 animate__animated animate__fadeInRight">
                 <div class="card-body">
-                    <h5 class="card-title text-success">Recent Activities</h5>
+                    <h5 class="card-title text-success"><i class="fas fa-history me-2"></i>Recent Activities</h5>
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item">Water level adjusted at 10:00 AM</li>
                         <li class="list-group-item">Temperature stabilized at 22°C</li>
@@ -104,7 +109,72 @@
     </div>
 </div>
 
+<style>
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
 
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .progress-bar {
+        transition: width 0.5s ease;
+    }
+
+    .animate__animated {
+        animation-duration: 1s;
+    }
+
+    .animate__fadeIn {
+        animation-name: fadeIn;
+    }
+
+    .animate__fadeInUp {
+        animation-name: fadeInUp;
+    }
+
+    .animate__fadeInLeft {
+        animation-name: fadeInLeft;
+    }
+
+    .animate__fadeInRight {
+        animation-name: fadeInRight;
+    }
+
+    .animate__pulse {
+        animation-name: pulse;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInLeft {
+        from { opacity: 0; transform: translateX(-20px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes fadeInRight {
+        from { opacity: 0; transform: translateX(20px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+</style>
+
+<!-- JavaScript for Dynamic Updates -->
 <script>
     let startTime = new Date().getTime(); // Record the time when the page loads
 
@@ -127,27 +197,31 @@
                     // Update table rows manually
                     document.querySelector("#liveStats").innerHTML = `
                         <tr>
-                            <td>Temperature</td>
+                            <td><i class="fas fa-thermometer-half me-2"></i>Temperature</td>
                             <td>${ conditions.temperature } °C</td>
                         </tr>
                         <tr>
-                            <td>Humidity</td>
+                            <td><i class="fas fa-tint me-2"></i>Humidity</td>
                             <td>${ conditions.humidity } %</td>
                         </tr>
                         <tr>
-                            <td>CO2</td>
+                            <td><i class="fas fa-wind me-2"></i>CO2</td>
                             <td>${ conditions.co2 } PPM</td>
                         </tr>
                         <tr>
-                            <td>TVOC</td>
+                            <td><i class="fas fa-smog me-2"></i>TVOC</td>
                             <td>${ conditions.tvoc } PPM</td>
                         </tr>
                         <tr>
-                            <td>Water Level</td>
-                            <td>${ conditions.distance } %</td>
+                            <td><i class="fas fa-glass-whiskey me-2"></i>Water Level</td>
+                            <td>
+                                <div class="progress" style="height: 25px;">
+                                    <div class="progress-bar bg-info" role="progressbar" style="width: ${ conditions.distance }%;" aria-valuenow="${ conditions.distance }" aria-valuemin="0" aria-valuemax="100">${ conditions.distance }%</div>
+                                </div>
+                            </td>
                         </tr>
                         <tr>
-                            <td>Soil Moisture</td>
+                            <td><i class="fas fa-seedling me-2"></i>Soil Moisture</td>
                             <td>${ conditions.soilMoisture === 1 ? '<span class="badge bg-danger">Dry</span>' : conditions.soilMoisture === 0 ? '<span class="badge bg-success">Wet</span>' : '<span class="badge bg-secondary">Unknown</span>' }</td>
                         </tr>
                     `;
@@ -172,4 +246,9 @@
     // Fetch live stats immediately on page load
     fetchLiveStats();
 </script>
+
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+
 {% endblock %}
