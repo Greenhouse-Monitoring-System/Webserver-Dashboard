@@ -3,73 +3,107 @@
 {% block title %}Greenhouse Homepage{% endblock %}
 
 {% block content %}
+<div class="container mt-5">
 
-<h2>Welcome Back,</h2>
-<h2>Greenhouse Details</h2>
-<div class="card text-bg-dark" style="max-width: 50rem;">
-    <img src="{{ url_for('static', filename='upload_imgs/current/now.jpg') }}" class="card-img" alt="current view">
-    <div class="card-img-overlay">
-        <h5 class="card-title">
-            <div class="spinner-grow text-danger spinner-grow-sm" role="status">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold text-success">Welcome Back!</h1>
+        <p class="lead text-muted">Monitor and manage your greenhouse in real-time.</p>
+    </div>
+
+    <div class="card text-bg-dark mb-5 shadow-lg overflow-hidden" style="max-width: 50rem; margin: 0 auto;">
+        <img src="{{ url_for('static', filename='upload_imgs/current/now.jpg') }}" class="card-img" alt="current view" style="filter: brightness(0.8);">
+        <div class="card-img-overlay d-flex flex-column justify-content-end p-4">
+            <h5 class="card-title d-flex align-items-center text-white">
+                <div class="spinner-grow text-danger spinner-grow-sm me-2" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                Current View
+            </h5>
+            <p class="card-text text-white-50"><small id="timeCounter">Last updated 0 seconds ago</small></p>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-success text-white d-flex align-items-center py-3">
+            <div class="spinner-grow spinner-grow-sm me-2" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
-            Current View
-        </h5>
-        <p class="card-text"><small id="timeCounter">Last updated 0 seconds ago</small></p>
+            <h5 class="card-title mb-0">Live Stats</h5>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr class="table-success">
+                        <th>Parameter</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody id="liveStats">
+
+                    <tr>
+                        <td>Temperature</td>
+                        <td>{{ conditions.temperature }} °C</td>
+                    </tr>
+                    <tr>
+                        <td>Humidity</td>
+                        <td>{{ conditions.humidity }} %</td>
+                    </tr>
+                    <tr>
+                        <td>CO2</td>
+                        <td>{{ conditions.co2 }} PPM</td>
+                    </tr>
+                    <tr>
+                        <td>TVOC</td>
+                        <td>{{ conditions.tvoc }} PPM</td>
+                    </tr>
+                    <tr>
+                        <td>Water Level</td>
+                        <td>{{ conditions.distance }} %</td>
+                    </tr>
+                    <tr>
+                        <td>Soil Moisture</td>
+                        <td>
+                            {% if conditions.soilMoisture == 1 %}
+                            <span class="badge bg-danger">Dry</span>
+                            {% elif conditions.soilMoisture == 0 %}
+                            <span class="badge bg-success">Wet</span>
+                            {% else %}
+                            <span class="badge bg-secondary">Unknown</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="card-title text-success">Tips for Optimal Growth</h5>
+                    <p class="card-text text-muted">
+                        Maintain a temperature between 18°C and 25°C, and ensure humidity levels stay between 40% and 60%.
+                        Regularly check soil moisture and water levels to keep your plants healthy.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="card-title text-success">Recent Activities</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Water level adjusted at 10:00 AM</li>
+                        <li class="list-group-item">Temperature stabilized at 22°C</li>
+                        <li class="list-group-item">Soil moisture checked at 9:30 AM</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-<br>
-<table class="table table-striped caption-top">
-    <caption>
-        <div class="spinner-grow text-danger spinner-grow-sm" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
-        Live Stats
-    </caption>
-    <thead>
-    <tr class="table-success">
-        <th>Param</th>
-        <th>Value</th>
-    </tr>
-    </thead>
-    <tbody id="liveStats">
-    <!-- Display each condition in the desired order -->
-        <tr>
-            <td>Temperature</td>
-            <td>{{ conditions.temperature }} °C</td>
-        </tr>
-        <tr>
-            <td>Humidity</td>
-            <td>{{ conditions.humidity }} %</td>
-        </tr>
-        <tr>
-            <td>CO2</td>
-            <td>{{ conditions.co2 }} PPM</td>
-        </tr>
-        <tr>
-            <td>TVOC</td>
-            <td>{{ conditions.tvoc }} PPM</td>
-        </tr>
-        <tr>
-            <td>Water Level</td>
-            <td>{{ conditions.distance }} %</td>
-        </tr>
-        <tr>
-            <td>Soil Moisture</td>
-            <td>
-                {% if conditions.soilMoisture == 1 %}
-                Dry
-                {% elif conditions.soilMoisture == 0 %}
-                Wet
-                {% else %}
-                Unknown
-                {% endif %}
-            </td>
-        </tr>
-    </tbody>
-</table>
 
-<!--<a href="/greenhouse/conditions" class="btn btn-primary">Check Conditions</a>-->
 
 <script>
     let startTime = new Date().getTime(); // Record the time when the page loads
@@ -112,7 +146,10 @@
                             <td>Water Level</td>
                             <td>${ conditions.distance } %</td>
                         </tr>
-                        <tr><td>Soil Moisture</td><td>${conditions.soilMoisture === 1 ? "Dry" : conditions.soilMoisture === 0 ? "Wet" : "Unknown"}</td></tr>
+                        <tr>
+                            <td>Soil Moisture</td>
+                            <td>${ conditions.soilMoisture === 1 ? '<span class="badge bg-danger">Dry</span>' : conditions.soilMoisture === 0 ? '<span class="badge bg-success">Wet</span>' : '<span class="badge bg-secondary">Unknown</span>' }</td>
+                        </tr>
                     `;
 
                     // Reset the timer
@@ -135,5 +172,4 @@
     // Fetch live stats immediately on page load
     fetchLiveStats();
 </script>
-
 {% endblock %}
