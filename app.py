@@ -95,6 +95,10 @@ def tips():
 def config():
     return render_template("configuration.html")
 
+@app.route("/simulator")
+def simulator():
+    return render_template("simulator.html")
+
 @app.route("/assistant")
 def assistant():
     return render_template("assistant.html")

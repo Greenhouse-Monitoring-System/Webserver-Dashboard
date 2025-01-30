@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block title %}GMS Home Page{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-success display-4">Greenhouse Plant Growth Simulator</h2>
+        <p class="lead text-muted">Watch your plant grow from a seedling to a fully grown plant!</p>
+    </div>
+
+    <div class="card shadow-lg p-4 mb-5 bg-white rounded">
+        <div class="card-body text-center">
+
+            <div class="plant-container mb-4">
+                <img id="plant" src="{{ url_for('static', filename='SEEDD0.png') }}" alt="Plant" class="img-fluid rounded-circle shadow-sm" style="width: 200px; height: 200px; object-fit: cover; transition: all 0.5s ease;">
+            </div>
+
+
+            <div class="controls mt-3">
+                <button id="next-btn" class="btn btn-success btn-lg me-3">
+                    <i class="fas fa-arrow-right"></i> Next Stage
+                </button>
+                <button id="harvest-btn" class="btn btn-secondary btn-lg" disabled>
+                    <i class="fas fa-hand-holding-heart"></i> Harvest Plant
+                </button>
+            </div>
+
+            <!-- Status -->
+            <div class="status mt-4">
+                <p class="lead">Status: <span id="status-text" class="text-success fw-bold">Seedling</span></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-success display-5">Get Started Today</h2>
+        <p class="lead text-muted">Join the revolution in smart greenhouse farming.</p>
+        <a href="/greenhouse_home" class="btn btn-success btn-lg">
+            <i class="fas fa-tachometer-alt"></i> Go to Dashboard
+        </a>
+    </div>
+</div>
+
+<style>
+    .plant-container {
+        position: relative;
+        display: inline-block;
+    }
+
+    .plant-container::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80%;
+        height: 10px;
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 50%;
+        filter: blur(5px);
+    }
+
+    #plant {
+        border: 5px solid #fff;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-success {
+        background-color: #28a745;
+        border-color: #28a745;
+        transition: all 0.3s ease;
+    }
+
+    .btn-success:hover {
+        background-color: #218838;
+        border-color: #1e7e34;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        border-color: #6c757d;
+        transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+        background-color: #5a6268;
+        border-color: #545b62;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(108, 117, 125, 0.4);
+    }
+
+    .card {
+        border: none;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .alert {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+    }
+</style>
+
+<script>
+    const plant = document.getElementById('plant');
+    const nextBtn = document.getElementById('next-btn');
+    const harvestBtn = document.getElementById('harvest-btn');
+    const statusText = document.getElementById('status-text');
+
+    let growthStage = 0;
+    const growthStages = [
+        { src: "{{ url_for('static', filename='SEEDD0.png') }}", size: 200, status: 'Seedling' },
+        { src: "{{ url_for('static', filename='Seed.jpg') }}", size: 250, status: 'Sprout' },
+        { src: "{{ url_for('static', filename='small.jpg') }}", size: 300, status: 'Small Plant' },
+        { src: "{{ url_for('static', filename='medium.jpg') }}", size: 350, status: 'Medium Plant' },
+        { src: "{{ url_for('static', filename='large.jpg') }}", size: 400, status: 'Large Plant' },
+        { src: "{{ url_for('static', filename='harvest.jpg') }}", size: 450, status: 'Ready to Harvest' }
+    ];
+
+    function updatePlant() {
+        plant.src = growthStages[growthStage].src;
+        plant.style.width = `${growthStages[growthStage].size}px`;
+        plant.style.height = `${growthStages[growthStage].size}px`;
+        statusText.textContent = growthStages[growthStage].status;
+
+        if (growthStage === growthStages.length - 1) {
+            nextBtn.disabled = true;
+            harvestBtn.disabled = false;
+        }
+    }
+
+    nextBtn.addEventListener('click', () => {
+        if (growthStage < growthStages.length - 1) {
+            growthStage++;
+            updatePlant();
+        }
+    });
+
+    harvestBtn.addEventListener('click', () => {
+        // Reset growth stage
+        growthStage = 0;
+        updatePlant();
+        nextBtn.disabled = false;
+        harvestBtn.disabled = true;
+
+        // Add a visual feedback message
+        const feedback = document.createElement('div');
+        feedback.className = 'alert alert-success';
+        feedback.textContent = 'Plant harvested! Growth has been reset.';
+        document.body.appendChild(feedback);
+
+        // Remove the feedback message after 3 seconds
+        setTimeout(() => {
+            feedback.remove();
+        }, 3000);
+    });
+
+    // Initial setup
+    updatePlant();
+</script>
+{% endblock %}

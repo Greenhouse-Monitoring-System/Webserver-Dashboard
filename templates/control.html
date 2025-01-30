@@ -3,27 +3,97 @@
 {% block title %}Control Page{% endblock %}
 
 {% block content %}
-<h2>Greenhouse Control</h2>
+<div class="container mt-5">
 
-<div class="card mb-3">
-    <div class="card-body">
-        <h4>Water Irrigation Motor</h4>
-        <p>Current State: <strong id="water_pump-state">{{ motor_state }}</strong></p>
-        <button id="toggle-water_pump" class="btn btn-{{ 'success' if motor_state == 'OFF' else 'danger' }}">
-            {{ 'Turn ON' if motor_state == 'OFF' else 'Turn OFF' }}
-        </button>
+    <div class="text-center mb-5 animate__animated animate__fadeIn">
+        <h1 class="display-4 fw-bold text-success mb-3">
+            <i class="fas fa-leaf me-2"></i>Greenhouse Control
+        </h1>
+        <p class="lead text-muted">Manage your greenhouse systems with ease and precision.</p>
+        <div class="mt-3">
+            <span class="badge bg-success me-2">Real-Time</span>
+        </div>
+    </div>
+
+    <div class="card mb-4 shadow-sm animate__animated animate__fadeInLeft">
+        <div class="card-body text-center">
+            <h4 class="card-title mb-3"><i class="fas fa-tint me-2"></i>Water Irrigation Motor</h4>
+            <p class="card-text">Current State: <strong id="water_pump-state" class="text-{{ 'success' if motor_state == 'ON' else 'danger' }}">{{ motor_state }}</strong></p>
+            <button id="toggle-water_pump" class="btn btn-{{ 'success' if motor_state == 'OFF' else 'danger' }} btn-lg animate__animated animate__pulse animate__infinite">
+                <i class="fas fa-power-off me-2"></i>{{ 'Turn ON' if motor_state == 'OFF' else 'Turn OFF' }}
+            </button>
+        </div>
+    </div>
+
+
+    <div class="card shadow-sm animate__animated animate__fadeInRight">
+        <div class="card-body text-center">
+            <h4 class="card-title mb-3"><i class="fas fa-fan me-2"></i>Fan Motor</h4>
+            <p class="card-text">Current State: <strong id="ventilation-state" class="text-{{ 'success' if fan_state == 'ON' else 'danger' }}">{{ fan_state }}</strong></p>
+            <button id="toggle-ventilation" class="btn btn-{{ 'success' if fan_state == 'OFF' else 'danger' }} btn-lg animate__animated animate__pulse animate__infinite">
+                <i class="fas fa-power-off me-2"></i>{{ 'Turn ON' if fan_state == 'OFF' else 'Turn OFF' }}
+            </button>
+        </div>
     </div>
 </div>
 
-<div class="card">
-    <div class="card-body">
-        <h4>Fan Motor</h4>
-        <p>Current State: <strong id="ventilation-state">{{ fan_state }}</strong></p>
-        <button id="toggle-ventilation" class="btn btn-{{ 'success' if fan_state == 'OFF' else 'danger' }}">
-            {{ 'Turn ON' if fan_state == 'OFF' else 'Turn OFF' }}
-        </button>
-    </div>
-</div>
+<style>
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-lg {
+        padding: 10px 20px;
+        font-size: 1.2rem;
+    }
+
+    .animate__animated {
+        animation-duration: 1s;
+    }
+
+    .animate__fadeIn {
+        animation-name: fadeIn;
+    }
+
+    .animate__fadeInLeft {
+        animation-name: fadeInLeft;
+    }
+
+    .animate__fadeInRight {
+        animation-name: fadeInRight;
+    }
+
+    .animate__pulse {
+        animation-name: pulse;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes fadeInLeft {
+        from { opacity: 0; transform: translateX(-20px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes fadeInRight {
+        from { opacity: 0; transform: translateX(20px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+</style>
+
 
 <script>
     // Function to send toggle request
@@ -45,10 +115,12 @@
 
                 // Update the state display
                 stateElement.textContent = data.new_state;
+                stateElement.className = `text-${data.new_state === 'ON' ? 'success' : 'danger'}`;
 
                 // Update the button appearance and text
-                buttonElement.textContent = data.new_state === 'OFF' ? 'Turn ON' : 'Turn OFF';
-                buttonElement.className = data.new_state === 'OFF' ? 'btn btn-success' : 'btn btn-danger';
+                buttonElement.textContent = data.new_state === 'OFF' ? ' Turn ON' : ' Turn OFF';
+                buttonElement.className = `btn btn-${data.new_state === 'OFF' ? 'success' : 'danger'} btn-lg animate__animated animate__pulse animate__infinite`;
+                buttonElement.innerHTML = `<i class="fas fa-power-off me-2"></i>${data.new_state === 'OFF' ? 'Turn ON' : 'Turn OFF'}`;
             }
         })
         .catch(error => {
@@ -61,5 +133,9 @@
     document.getElementById('toggle-water_pump').addEventListener('click', () => toggleDevice('water_pump'));
     document.getElementById('toggle-ventilation').addEventListener('click', () => toggleDevice('ventilation'));
 </script>
+
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 
 {% endblock %}
