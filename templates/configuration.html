@@ -39,7 +39,7 @@
                     <div class="d-flex w-100 justify-content-between">
                         <small class="text-muted">10 minutes ago</small>
                     </div>
-                    <p class="mb-1">Soil moisture adjusted for Strawberries.</p>
+                    <p class="mb-1">Soil moisture adjusted for Tomatoes.</p>
                 </a>
             </div>
         </div>
@@ -48,18 +48,22 @@
             <div class="text-center mb-5">
                 <h1 class="display-4 fw-bold text-success gradient-text">Your Greenhouse, Your Control!</h1>
                 <p class="lead text-muted">Monitor and manage your greenhouse in real-time.</p>
-                <select id="plantSelector" class="form-select form-select-lg mb-3 w-50 mx-auto shadow-sm" aria-label="Select plant">
-                    <option value="tomatoes">Tomatoes</option>
-                    <option value="potatoes">Potatoes</option>
-                    <option value="lettuce">Lettuce</option>
-                    <option value="strawberries">Strawberries</option>
-                    <option value="cucumbers">Cucumbers</option>
-                    <option value="peppers">Peppers</option>
-                    <option value="carrots">Carrots</option>
-                    <option value="basil">Basil</option>
-                    <option value="rosemary">Rosemary</option>
-                    <option value="mint">Mint</option>
-                </select>
+                <div class="d-flex justify-content-center align-items-center">
+                    <select id="plantSelector" class="form-select form-select-lg mb-3 w-50 mx-auto shadow-sm" aria-label="Select plant">
+                        <option value="tomatoes">Tomatoes</option>
+                        <option value="potatoes">Potatoes</option>
+                        <option value="lettuce">Lettuce</option>
+                        <option value="strawberries">Strawberries</option>
+                        <option value="cucumbers">Cucumbers</option>
+                        <option value="peppers">Peppers</option>
+                        <option value="carrots">Carrots</option>
+                        <option value="basil">Basil</option>
+                        <option value="rosemary">Rosemary</option>
+                        <option value="mint">Mint</option>
+                        <option value="custom" id="custom12">Custom</option>
+                    </select>
+                    <button id="deleteCustomPlantBtn" class="btn btn-danger ms-2" style="display: none;">❌</button>
+                </div>
             </div>
 
             <div class="card shadow-lg border-0">
@@ -118,7 +122,87 @@
     </div>
 </div>
 
+<
+<div class="modal fade" id="customPlantModal" tabindex="-1" aria-labelledby="customPlantModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="customPlantModalLabel">Add Custom Plant</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="customPlantForm">
+                    <div class="mb-3">
+                        <label for="plantName" class="form-label">Plant Name</label>
+                        <input type="text" class="form-control" id="plantName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="temperatureMin" class="form-label">Temperature Min (°C)</label>
+                        <input type="number" class="form-control" id="temperatureMin" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="temperatureMax" class="form-label">Temperature Max (°C)</label>
+                        <input type="number" class="form-control" id="temperatureMax" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="humidityMin" class="form-label">Humidity Min (%)</label>
+                        <input type="number" class="form-control" id="humidityMin" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="humidityMax" class="form-label">Humidity Max (%)</label>
+                        <input type="number" class="form-control" id="humidityMax" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="co2Min" class="form-label">CO2 Min (PPM)</label>
+                        <input type="number" class="form-control" id="co2Min" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="co2Max" class="form-label">CO2 Max (PPM)</label>
+                        <input type="number" class="form-control" id="co2Max" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="tvocMin" class="form-label">TVOC Min (PPM)</label>
+                        <input type="number" class="form-control" id="tvocMin" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="tvocMax" class="form-label">TVOC Max (PPM)</label>
+                        <input type="number" class="form-control" id="tvocMax" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="waterLevelMin" class="form-label">Water Level Min (%)</label>
+                        <input type="number" class="form-control" id="waterLevelMin" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="waterLevelMax" class="form-label">Water Level Max (%)</label>
+                        <input type="number" class="form-control" id="waterLevelMax" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="soilMoisture" class="form-label">Soil Moisture</label>
+                        <select class="form-select" id="soilMoisture" required>
+                            <option value="dry">Dry</option>
+                            <option value="moist">Moist</option>
+                            <option value="wet">Wet</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="plantInfoText" class="form-label">Plant Info</label>
+                        <textarea class="form-control" id="plantInfoText" rows="3" required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" id="saveCustomPlant">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <style>
+    #custom12 {
+        background-color: #FFFFBF;
+    }
+
     .gradient-text {
         background: linear-gradient(45deg, #28a745, #20c997);
         -webkit-background-clip: text;
@@ -255,6 +339,63 @@
         }
     };
 
+    // Load custom plants from local storage
+    function loadCustomPlants() {
+        const customPlants = JSON.parse(localStorage.getItem('customPlants')) || {};
+        Object.assign(plantConfigurations, customPlants);
+
+        // Add custom plants to the dropdown
+        const plantSelector = document.getElementById('plantSelector');
+        for (const plantName in customPlants) {
+            if (!plantSelector.querySelector(`option[value="${plantName}"]`)) {
+                const option = document.createElement('option');
+                option.value = plantName;
+                option.text = plantName.charAt(0).toUpperCase() + plantName.slice(1);
+                plantSelector.appendChild(option);
+            }
+        }
+    }
+
+    // Save custom plants to local storage
+    function saveCustomPlants() {
+        const customPlants = {};
+        for (const plantName in plantConfigurations) {
+            if (!['tomatoes', 'potatoes', 'lettuce', 'strawberries', 'cucumbers', 'peppers', 'carrots', 'basil', 'rosemary', 'mint'].includes(plantName)) {
+                customPlants[plantName] = plantConfigurations[plantName];
+            }
+        }
+        localStorage.setItem('customPlants', JSON.stringify(customPlants));
+    }
+
+    // Remove a custom plant
+    function removeCustomPlant() {
+        const plantSelector = document.getElementById('plantSelector');
+        const selectedPlant = plantSelector.value;
+
+        // Check if the selected plant is a custom plant
+        if (!['tomatoes', 'potatoes', 'lettuce', 'strawberries', 'cucumbers', 'peppers', 'carrots', 'basil', 'rosemary', 'mint', 'custom'].includes(selectedPlant)) {
+            // Remove from plantConfigurations
+            delete plantConfigurations[selectedPlant];
+
+            // Remove from dropdown
+            const option = plantSelector.querySelector(`option[value="${selectedPlant}"]`);
+            if (option) {
+                plantSelector.removeChild(option);
+            }
+
+            // Save updated custom plants to local storage
+            saveCustomPlants();
+
+            // Reset to default plant if the deleted plant was selected
+            currentPlant = 'tomatoes';
+            plantSelector.value = 'tomatoes';
+            updateThresholds();
+
+            // Hide the delete button
+            document.getElementById('deleteCustomPlantBtn').style.display = 'none';
+        }
+    }
+
     let currentPlant = 'tomatoes';
 
     function updateThresholds() {
@@ -303,10 +444,81 @@
     }
 
     document.getElementById('plantSelector').addEventListener('change', function(event) {
-        currentPlant = event.target.value;
-        updateThresholds();
+        if (event.target.value === 'custom') {
+            // Show the custom plant modal
+            const modal = new bootstrap.Modal(document.getElementById('customPlantModal'));
+            modal.show();
+        } else {
+            currentPlant = event.target.value;
+            updateThresholds();
+
+            // Show/hide the delete button based on whether a custom plant is selected
+            const deleteBtn = document.getElementById('deleteCustomPlantBtn');
+            if (!['tomatoes', 'potatoes', 'lettuce', 'strawberries', 'cucumbers', 'peppers', 'carrots', 'basil', 'rosemary', 'mint', 'custom'].includes(event.target.value)) {
+                deleteBtn.style.display = 'inline-block';
+            } else {
+                deleteBtn.style.display = 'none';
+            }
+        }
     });
 
+    document.getElementById('saveCustomPlant').addEventListener('click', function() {
+        const plantName = document.getElementById('plantName').value.toLowerCase();
+        const temperatureMin = parseInt(document.getElementById('temperatureMin').value);
+        const temperatureMax = parseInt(document.getElementById('temperatureMax').value);
+        const humidityMin = parseInt(document.getElementById('humidityMin').value);
+        const humidityMax = parseInt(document.getElementById('humidityMax').value);
+        const co2Min = parseInt(document.getElementById('co2Min').value);
+        const co2Max = parseInt(document.getElementById('co2Max').value);
+        const tvocMin = parseInt(document.getElementById('tvocMin').value);
+        const tvocMax = parseInt(document.getElementById('tvocMax').value);
+        const waterLevelMin = parseInt(document.getElementById('waterLevelMin').value);
+        const waterLevelMax = parseInt(document.getElementById('waterLevelMax').value);
+        const soilMoisture = document.getElementById('soilMoisture').value;
+        const plantInfo = document.getElementById('plantInfoText').value;
+
+        // Add custom plant to configurations
+        plantConfigurations[plantName] = {
+            temperature: { min: temperatureMin, max: temperatureMax },
+            humidity: { min: humidityMin, max: humidityMax },
+            co2: { min: co2Min, max: co2Max },
+            tvoc: { min: tvocMin, max: tvocMax },
+            waterLevel: { min: waterLevelMin, max: waterLevelMax },
+            soilMoisture: soilMoisture,
+            info: plantInfo
+        };
+
+        // Add custom plant to the dropdown
+        const plantSelector = document.getElementById('plantSelector');
+        const option = document.createElement('option');
+        option.value = plantName;
+        option.text = plantName.charAt(0).toUpperCase() + plantName.slice(1);
+        plantSelector.appendChild(option);
+
+        // Select the new plant
+        currentPlant = plantName;
+        plantSelector.value = plantName;
+        updateThresholds();
+
+        // Show the delete button
+        document.getElementById('deleteCustomPlantBtn').style.display = 'inline-block';
+
+        // Save custom plants to local storage
+        saveCustomPlants();
+
+        // Close the modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('customPlantModal'));
+        modal.hide();
+
+        // Clear the form
+        document.getElementById('customPlantForm').reset();
+    });
+
+    // Add event listener for the delete button
+    document.getElementById('deleteCustomPlantBtn').addEventListener('click', removeCustomPlant);
+
+    // Load custom plants when the page loads
+    loadCustomPlants();
     updateThresholds();
     fetchLiveStats();
 
