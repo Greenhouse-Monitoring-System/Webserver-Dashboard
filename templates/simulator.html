@@ -27,7 +27,6 @@
                 </button>
             </div>
 
-            <!-- Status -->
             <div class="status mt-4">
                 <p class="lead">Status: <span id="status-text" class="text-success fw-bold">Seedling</span></p>
             </div>
@@ -121,10 +120,10 @@
     const growthStages = [
         { src: "{{ url_for('static', filename='SEEDD0.png') }}", size: 200, status: 'Seedling' },
         { src: "{{ url_for('static', filename='Seed.jpg') }}", size: 250, status: 'Sprout' },
-        { src: "{{ url_for('static', filename='small.jpg') }}", size: 300, status: 'Small Plant' },
-        { src: "{{ url_for('static', filename='medium.jpg') }}", size: 350, status: 'Medium Plant' },
+        { src: "{{ url_for('static', filename='smallplant1.png') }}", size: 300, status: 'Small Plant' },
+        { src: "{{ url_for('static', filename='mediumplant.jpg') }}", size: 350, status: 'Medium Plant' },
         { src: "{{ url_for('static', filename='large.jpg') }}", size: 400, status: 'Large Plant' },
-        { src: "{{ url_for('static', filename='harvest.jpg') }}", size: 450, status: 'Ready to Harvest' }
+        { src: "{{ url_for('static', filename='harvestplantpng.png') }}", size: 450, status: 'Ready to Harvest' }
     ];
 
     function updatePlant() {
