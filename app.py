@@ -90,6 +90,9 @@ def index():
 @app.route("/tips")
 def tips():
     return render_template("tips.html")
+@app.route("/settings")
+def settings():
+    return render_template("settings.html")
 
 @app.route("/config")
 def config():
