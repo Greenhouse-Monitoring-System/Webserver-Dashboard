@@ -97,15 +97,16 @@
       </div>
 
       <div class="reminders">
-        <h2>Reminders</h2>
-        <div id="reminders-list">
-          <!-- Reminders will be dynamically added here -->
-        </div>
-        <form class="interactive-form" onsubmit="return false;">
-          <input type="text" id="new-reminder" placeholder="Add a new reminder...">
-          <button type="submit" onclick="addReminder()">Add</button>
-        </form>
-      </div>
+  <h2>Reminders</h2>
+  <div id="reminders-list">
+    <!-- Reminders will be dynamically added here -->
+  </div>
+  <form class="interactive-form" onsubmit="return false;">
+    <input type="text" id="new-reminder" placeholder="Add a new reminder...">
+    <input type="date" id="reminder-date">
+    <button type="submit" onclick="addReminder()">Add</button>
+  </form>
+</div>
     </div>
   </div>
 
@@ -177,47 +178,54 @@
     }
 
     // Load saved reminders from localStorage when the page loads
-    document.addEventListener('DOMContentLoaded', function () {
-      loadReminders();
-    });
+   // Load saved reminders from localStorage when the page loads
+document.addEventListener('DOMContentLoaded', function () {
+  loadReminders();
+});
 
-    // Function to load reminders from localStorage
-    function loadReminders() {
-      const reminders = JSON.parse(localStorage.getItem('reminders')) || [];
-      const remindersList = document.getElementById('reminders-list');
-      remindersList.innerHTML = ''; // Clear existing reminders
+// Function to load reminders from localStorage
+function loadReminders() {
+  const reminders = JSON.parse(localStorage.getItem('reminders')) || [];
+  const remindersList = document.getElementById('reminders-list');
+  remindersList.innerHTML = ''; // Clear existing reminders
 
-      reminders.forEach((reminder, index) => {
-        const reminderElement = document.createElement('div');
-        reminderElement.className = 'notification';
-        reminderElement.innerHTML = `
-          <strong>Reminder:</strong> ${reminder}
-          <button onclick="removeReminder(${index})" class="remove-btn">Remove</button>
-        `;
-        remindersList.appendChild(reminderElement);
-      });
-    }
+  reminders.forEach((reminder, index) => {
+    const reminderElement = document.createElement('div');
+    reminderElement.className = 'notification';
+    reminderElement.innerHTML = `
+      <strong>Reminder:</strong> ${reminder.text} <br>
+      <strong>Due Date:</strong> ${reminder.date}
+      <button onclick="removeReminder(${index})" class="remove-btn">Remove</button>
+    `;
+    remindersList.appendChild(reminderElement);
+  });
+}
 
-    // Function to add a new reminder
-    function addReminder() {
-      const reminderText = document.getElementById('new-reminder').value.trim();
-      if (reminderText) {
-        const reminders = JSON.parse(localStorage.getItem('reminders')) || [];
-        reminders.push(reminderText);
-        localStorage.setItem('reminders', JSON.stringify(reminders));
-        document.getElementById('new-reminder').value = ''; // Clear input field
-        loadReminders(); // Refresh the reminders list
-      }
-    }
+// Function to add a new reminder
+function addReminder() {
+  const reminderText = document.getElementById('new-reminder').value.trim();
+  const reminderDate = document.getElementById('reminder-date').value.trim();
 
-    // Function to remove a reminder
-    function removeReminder(index) {
-      const reminders = JSON.parse(localStorage.getItem('reminders')) || [];
-      reminders.splice(index, 1); // Remove the reminder at the specified index
-      localStorage.setItem('reminders', JSON.stringify(reminders));
-      loadReminders(); // Refresh the reminders list
-    }
-  </script>
+  if (reminderText && reminderDate) {
+    const reminders = JSON.parse(localStorage.getItem('reminders')) || [];
+    reminders.push({ text: reminderText, date: reminderDate });
+    localStorage.setItem('reminders', JSON.stringify(reminders));
+
+    document.getElementById('new-reminder').value = ''; // Clear input field
+    document.getElementById('reminder-date').value = ''; // Clear date field
+
+    loadReminders(); // Refresh the reminders list
+  }
+}
+
+// Function to remove a reminder
+function removeReminder(index) {
+  const reminders = JSON.parse(localStorage.getItem('reminders')) || [];
+  reminders.splice(index, 1); // Remove the reminder at the specified index
+  localStorage.setItem('reminders', JSON.stringify(reminders));
+  loadReminders(); // Refresh the reminders list
+}
+</script>
 
   <style>
     /* Global Styles */
@@ -408,6 +416,7 @@
     }
 
     .interactive-form input[type="text"] {
+     flex-grow: 1; /* Expands to fill available space */
       width: calc(100% - 90px);
       padding: 10px;
       border: 1px solid #ddd;
@@ -416,9 +425,29 @@
       transition: border-color 0.3s ease;
     }
 
+    .interactive-form {
+        display: flex;
+        align-items: center;
+        gap: 10px; /* Spacing between elements */
+        background: #f9f9f9;
+        padding: 10px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        max-width: 600px; /* Limits width for better design */
+        margin: auto; /* Center form */
+    }
+
     .interactive-form input[type="text"]:focus {
       border-color: #2e7d32;
       outline: none;
+    }
+    .interactive-form input[type="date"] {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+        width: 150px;
+        cursor: pointer;
     }
 
     .interactive-form button {
@@ -432,6 +461,7 @@
       font-size: 1rem;
       transition: background 0.3s ease, transform 0.2s ease;
     }
+
 
     .interactive-form button:hover {
       background: #1b5e20;
