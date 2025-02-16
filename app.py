@@ -8,7 +8,8 @@ import threading
 
 with open("config.toml", "rb") as f:
     config = tomllib.load(f)
-
+DATA_FILE = "conditions.json"
+RETENTION_PERIOD = 90 # number of days to keep data
 app = Flask(__name__)
 conditions_file = config["json"]["CONDITIONS"]
 currentData = config["json"]["DATA"]
@@ -19,6 +20,57 @@ gms_url= config["url"]["GMS"]
 
 gms_status = "UNKNOWN"
 
+def load_past_data():
+    """load existing sensor data from JSON, or return empty
+    if file doesnt exist"""
+    if os.path.exists(DATA_FILE):
+        with open(DATA_FILE, "r") as file:
+            return json.load(file)
+    return {"conditions": []}
+
+def save_reading(new_data):
+    """append new data, remove old entires and save to file"""
+    data = load_past_data()
+
+    #convert timestamp string to datetime
+    oldest_date = datetime.now() - timedelta(days=RETENTION_PERIOD)
+
+    #filtering to only keep data for retention time
+    filtered_conditions = [
+        entry for entry in data["conditions"]
+        if datatime.striptime(entry["timestamp"], "%Y-%m-%d %H:%M:%S") > oldest_date
+    ]
+
+    #appending new data
+    filtered_conditions.append(new_data)
+
+    #save filtered data back to file
+    with open(DATA_FILE, "w") as file:
+        json.dump({"conditions" : filtered_conditions} , file, indent =4)
+
+def update_current_data():
+    """fetch new sensor data and save it while only keeping recent entires"""
+    global currentData
+    while True:
+        try:
+            respose = requests.get(f"ttp://127.0.0.1:8080/api/sensors", timeout = 10)
+
+            if response.status_code == 200:
+                sensor_data = response.json()
+                sensor_data["distance"] = round(sensor_data["distance"] * 100 / container_vol)
+
+                #add timestamp to each entry 
+                sensor_data["timestamp"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+                # Save while keeping only the last 3 months
+                save_reading(sensor_data)
+                print("Updated data.json with:", sensor_data)
+            else:
+                print(f"Failed to fetch sensor readings: {response.status_code}")
+        except requests.RequestException as e:
+            print(f"Error fetching sensor readings: {str(e)}")
+
+        time.sleep(10)  # Fetch new data every 10 seconds
 #load conditions from JSON file
 def load_conditions():
     if os.path.exists(conditions_file):
@@ -93,6 +145,10 @@ def tips():
 @app.route("/settings")
 def settings():
     return render_template("settings.html")
+
+@app.route("/statistics")
+def statistics():
+    return render_template("statistics.html", RETENTION_PERIOD=RETENTION_PERIOD)
 
 @app.route("/config")
 def config():
