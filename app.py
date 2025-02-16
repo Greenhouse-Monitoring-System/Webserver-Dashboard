@@ -66,7 +66,7 @@ def update_current_data():
             if response.status_code == 200:
                 # Save the latest data to current-data.json
                 sensor_data = response.json()
-                sensor_data['distance'] = round(sensor_data['distance'] * 100 / container_vol)
+                sensor_data['distance'] = 100 - round(sensor_data['distance'] * 100 / container_vol)
                 with open(currentData, 'w') as file:
                     json.dump(sensor_data, file, indent=4)
                 print("Updated current-data.json with new sensor readings:", sensor_data)
