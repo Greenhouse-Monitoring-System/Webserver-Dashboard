@@ -3,16 +3,65 @@
 {% block title %}GMS Home Page{% endblock %}
 
 {% block content %}
+<div class="container mt-5">
 
-<h2>Welcome to the GMS Home Page</h2>
-<p>Navigate to the pages for more information on your greenhouse.</p>
-<br><br>
-<p class="lead">The Garden/Greenhouse Monitoring System project aims to create an automated, solar-powered solution to optimize plant
-    growth in greenhouses. This system integrates environmental sensors to monitor key parameters like soil moisture,
-    temperature, humidity, light intensity, and CO₂ levels. It uses IoT-enabled Raspberry Pi controllers for real-time
-    data collection and automated responses, such as irrigation and ventilation adjustments. A user-friendly web-based
-    interface allows for remote monitoring, manual irrigation, and live visual feeds. By leveraging solar power for
-    energy efficiency, the system ensures reliability and accessibility while reducing maintenance, aligning with the
-    goal of improving greenhouse farming efficiency and sustainability.</p>
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold text-success">Welcome to the GMS Home Page</h1>
+        <p class="lead text-muted">Navigate to the pages for more information on your greenhouse.</p>
+    </div>
 
+
+    <div class="row align-items-center mb-5">
+        <div class="col-md-6">
+            <img src="/static/homepage.png" class="img-fluid rounded shadow" alt="Greenhouse Image">
+        </div>
+        <div class="col-md-6">
+            <p class="lead text-muted">
+                The Garden/Greenhouse Monitoring System project aims to create an automated, solar-powered solution to optimize plant
+                growth in greenhouses. This system integrates environmental sensors to monitor key parameters like soil moisture,
+                temperature, humidity, light intensity, and CO₂ levels. It uses IoT-enabled Raspberry Pi controllers for real-time
+                data collection and automated responses, such as irrigation and ventilation adjustments. A user-friendly web-based
+                interface allows for remote monitoring, manual irrigation, and live visual feeds. By leveraging solar power for
+                energy efficiency, the system ensures reliability and accessibility while reducing maintenance, aligning with the
+                goal of improving greenhouse farming efficiency and sustainability.
+            </p>
+        </div>
+    </div>
+
+    <div class="row text-center mb-5">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body">
+                    <i class="fas fa-tint fa-3x text-success mb-3"></i>
+                    <h5 class="card-title">Soil Moisture Monitoring</h5>
+                    <p class="card-text text-muted">Real-time tracking of soil moisture levels to ensure optimal hydration for your plants.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body">
+                    <i class="fas fa-thermometer-half fa-3x text-success mb-3"></i>
+                    <h5 class="card-title">Temperature & Humidity Control</h5>
+                    <p class="card-text text-muted">Maintain the perfect climate for plant growth with automated adjustments.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body">
+                    <i class="fas fa-solar-panel fa-3x text-success mb-3"></i>
+                    <h5 class="card-title">Solar-Powered Efficiency</h5>
+                    <p class="card-text text-muted">Harness solar energy to power your greenhouse sustainably.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-success">Get Started Today</h2>
+        <p class="lead text-muted">Join the revolution in smart greenhouse farming.</p>
+        <a href="/greenhouse_home" class="btn btn-success btn-lg">Go to Dashboard</a>
+    </div>
+</div>
 {% endblock %}

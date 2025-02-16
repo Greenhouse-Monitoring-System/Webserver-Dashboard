@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Settings{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="text-center mb-4"><i class="bi bi-gear"></i> Settings</h2>
+
+    <div class="settings-card p-4 rounded shadow">
+        <!-- Temperature Unit -->
+        <div class="mb-3">
+            <label class="form-label">Temperature Unit:</label>
+            <select id="temp-unit" class="form-select">
+                <option value="C">Celsius (°C)</option>
+                <option value="F">Fahrenheit (°F)</option>
+            </select>
+        </div>
+
+        <!-- Time Format -->
+        <div class="mb-3">
+            <label class="form-label">Time Format:</label>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="time-format" id="time-12h" value="12h">
+                <label class="form-check-label" for="time-12h">12-hour</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="time-format" id="time-24h" value="24h">
+                <label class="form-check-label" for="time-24h">24-hour</label>
+            </div>
+        </div>
+
+        <!-- Language Selection -->
+        <div class="mb-3">
+            <label class="form-label">Language:</label>
+            <select id="language" class="form-select">
+                <option value="en">English</option>
+                <option value="fr">Français</option>
+                <option value="es">Español</option>
+            </select>
+        </div>
+
+        <!-- Auto-Refresh -->
+        <div class="mb-3">
+            <label class="form-label">Auto-Refresh:</label>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="auto-refresh-toggle">
+                <label class="form-check-label" for="auto-refresh-toggle">Enable Auto-Refresh</label>
+            </div>
+        </div>
+
+        <!-- Reset Settings -->
+        <button id="reset-settings" class="btn btn-outline-danger w-100 mb-2">
+            <i class="bi bi-arrow-counterclockwise"></i> Reset to Default
+        </button>
+    </div>
+</div>
+
+<script>
+    // Load saved settings
+    document.getElementById('temp-unit').value = localStorage.getItem('tempUnit') || 'C';
+    document.getElementById('language').value = localStorage.getItem('language') || 'en';
+    document.getElementById('auto-refresh-toggle').checked = localStorage.getItem('autoRefresh') === 'enabled';
+
+    const savedTimeFormat = localStorage.getItem('timeFormat') || '24h';
+    document.getElementById(`time-${savedTimeFormat}`).checked = true;
+
+    // Auto-Save on Change
+    document.querySelectorAll('select, input').forEach(element => {
+        element.addEventListener('change', () => {
+            localStorage.setItem('tempUnit', document.getElementById('temp-unit').value);
+            localStorage.setItem('language', document.getElementById('language').value);
+            localStorage.setItem('autoRefresh', document.getElementById('auto-refresh-toggle').checked ? 'enabled' : 'disabled');
+
+            const selectedTimeFormat = document.querySelector('input[name="time-format"]:checked').value;
+            localStorage.setItem('timeFormat', selectedTimeFormat);
+        });
+    });
+
+    // Reset to Default
+    document.getElementById('reset-settings').addEventListener('click', () => {
+        localStorage.clear();
+        location.reload();
+    });
+</script>
+{% endblock %}
