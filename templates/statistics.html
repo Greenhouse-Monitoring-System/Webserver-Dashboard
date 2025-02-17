@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Statistics{% endblock %}
+
+{% block content %}
+    <h2>Greenhouse Statistics</h2>
+    <canvas id="statsChart"></canvas>
+
+    <p><strong>Data Retention:</strong> Greenhouse condition data is saved for a period of {{ RETENTION_PERIOD }} days. Older data is automatically removed after this period to maintain system performance and keep the data relevant.</p>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        async function fetchData() {
+            try {
+                const response = await fetch("/get_current");
+                const data = await response.json();
+                console.log("Fetched Data:", data);  // Check if data is fetched correctly
+                return [data.conditions];  // Wrap the single condition object in an array
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                return null;
+            }
+        }
+
+        async function renderChart() {
+            const conditions = await fetchData();
+            if (!conditions) {
+                console.log("No conditions data available.");
+                return;  // Exit if no data
+            }
+
+            console.log("Conditions data:", conditions);  // Log the conditions to check the data format
+
+            const ctx = document.getElementById("statsChart").getContext("2d");
+
+            const timestamps = conditions.map(item => item.timestamp);  // Get the timestamp
+            const temperatureData = conditions.map(item => item.temperature);
+            const humidityData = conditions.map(item => item.humidity);
+            const co2Data = conditions.map(item => item.co2);
+            const soilMoistureData = conditions.map(item => item.soilMoisture);
+            const tvocData = conditions.map(item => item.tvoc);
+
+            new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels: timestamps,  // Use timestamps as labels
+                    datasets: [
+                        {
+                            label: "Temperature (°C)",
+                            data: temperatureData,
+                            borderColor: "red",
+                            fill: false
+                        },
+                        {
+                            label: "Humidity (%)",
+                            data: humidityData,
+                            borderColor: "blue",
+                            fill: false
+                        },
+                        {
+                            label: "CO2 Levels",
+                            data: co2Data,
+                            borderColor: "green",
+                            fill: false
+                        },
+                        {
+                            label: "Soil Moisture",
+                            data: soilMoistureData,
+                            borderColor: "brown",
+                            fill: false
+                        },
+                        {
+                            label: "TVOC",
+                            data: tvocData,
+                            borderColor: "purple",
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: { title: { display: true, text: "Time" }},
+                        y: { title: { display: true, text: "Values" }}
+                    }
+                }
+            });
+        }
+
+        renderChart();
+    </script>
+
+{% endblock %}
