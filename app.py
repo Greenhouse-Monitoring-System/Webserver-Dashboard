@@ -5,6 +5,7 @@ import time
 import tomllib
 import requests
 import threading
+from database import *
 
 with open("config.toml", "rb") as f:
     config = tomllib.load(f)
@@ -98,6 +99,10 @@ def config():
 @app.route("/simulator")
 def simulator():
     return render_template("simulator.html")
+
+@app.route("/statistics")
+def statistics():
+    return render_template("statistics.html", RETENTION_PERIOD=getAll_from_db())
 
 @app.route("/assistant")
 def assistant():
