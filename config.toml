@@ -7,3 +7,6 @@ DATA="current-data.json"
 
 [static]
 CONTAINER = 8
+
+[API]
+GPTAPI = "API"

@@ -5,6 +5,7 @@ import time
 import tomllib
 import requests
 import threading
+from gpt_openai import askGPT
 
 with open("config.toml", "rb") as f:
     config = tomllib.load(f)
@@ -102,6 +103,16 @@ def simulator():
 @app.route("/assistant")
 def assistant():
     return render_template("assistant.html")
+
+@app.route("/askgpt", methods=["POST"])
+def askgpt():
+    user_question = request.json.get('question', '').strip()
+    if not user_question:
+        return jsonify({'error': 'Empty question'}), 400
+
+    response = askGPT(user_question)
+    print("Response from GPT:\n", response)
+    return jsonify({'html': response})
 
 @app.route("/greenhouse_home")
 def greenhouse():
