@@ -3,113 +3,155 @@
 {% block title %}Greenhouse Homepage{% endblock %}
 
 {% block content %}
-  <div class="container">
+<div class="container">
 
     <div class="sidebar">
-      <h2>Available Commands</h2>
-      <ul>
-        <li><strong>"How do I plant [plant name]?"</strong> - Planting instructions.</li>
-        <li><strong>"How often should I water [plant name]?"</strong> - Watering tips.</li>
-        <li><strong>"What's the ideal temperature for [plant name]?"</strong> - Temperature guidelines.</li>
-        <li><strong>"How do I harvest [plant name]?"</strong> - Harvesting instructions.</li>
-        <li><strong>"How do I fertilize [plant name]?"</strong> - Fertilization tips.</li>
-        <li><strong>"How do I prune [plant name]?"</strong> - Pruning instructions.</li>
-        <li><strong>"How do I control pests on [plant name]?"</strong> - Pest control advice.</li>
-        <li><strong>"What's the best soil for [plant name]?"</strong> - Soil recommendations.</li>
-        <li><strong>"How much sunlight does [plant name] need?"</strong> - Sunlight requirements.</li>
-        <li><strong>"How do I transplant [plant name]?"</strong> - Transplanting guide.</li>
-        <li><strong>"How do I mulch [plant name]?"</strong> - Mulching tips.</li>
-        <li><strong>"How do I compost?"</strong> - Composting guide.</li>
-        <li><strong>"Add reminder: [reminder text]"</strong> - Add a new reminder.</li>
-      </ul>
+        <h2>Available Commands</h2>
+        <ul>
+            <li><strong>"How do I plant [plant name]?"</strong> - Planting instructions.</li>
+            <li><strong>"How often should I water [plant name]?"</strong> - Watering tips.</li>
+            <li><strong>"What's the ideal temperature for [plant name]?"</strong> - Temperature guidelines.</li>
+            <li><strong>"How do I harvest [plant name]?"</strong> - Harvesting instructions.</li>
+            <li><strong>"How do I fertilize [plant name]?"</strong> - Fertilization tips.</li>
+            <li><strong>"How do I prune [plant name]?"</strong> - Pruning instructions.</li>
+            <li><strong>"How do I control pests on [plant name]?"</strong> - Pest control advice.</li>
+            <li><strong>"What's the best soil for [plant name]?"</strong> - Soil recommendations.</li>
+            <li><strong>"How much sunlight does [plant name] need?"</strong> - Sunlight requirements.</li>
+            <li><strong>"How do I transplant [plant name]?"</strong> - Transplanting guide.</li>
+            <li><strong>"How do I mulch [plant name]?"</strong> - Mulching tips.</li>
+            <li><strong>"How do I compost?"</strong> - Composting guide.</li>
+            <li><strong>"Add reminder: [reminder text]"</strong> - Add a new reminder.</li>
+        </ul>
     </div>
 
     <div class="main-content">
-      <h1>Virtual Greenhouse Assistant</h1>
+        <h1>Virtual Greenhouse Assistant</h1>
 
-      <div class="chatbot">
-        <h2>Chatbot</h2>
-        <div class="chat-output" id="chat-output">
-          <p>Welcome to the Virtual Greenhouse Assistant! How can I help you today?</p>
+        <div class="chatbot">
+            <h2>Chatbot</h2>
+            <div class="chat-output" id="chat-output">
+                <p>Welcome to the Virtual Greenhouse Assistant! How can I help you today?</p>
+            </div>
+            <form class="interactive-form" onsubmit="return false;">
+                <input type="text" id="user-input" placeholder="Ask a question...">
+                <button type="submit" onclick="sendMessage()">Send</button>
+            </form>
         </div>
-        <form class="interactive-form" onsubmit="return false;">
-          <input type="text" id="user-input" placeholder="Ask a question...">
-          <button type="submit" onclick="sendMessage()">Send</button>
-        </form>
-      </div>
 
-      <div class="guides">
-        <h2>Step-by-Step Guides</h2>
-        <details>
-          <summary>How to Plant Seeds</summary>
-          <ol>
-            <li>Choose the right soil mix for your plant.</li>
-            <li>Fill seed trays with soil.</li>
-            <li>Plant seeds at the recommended depth.</li>
-            <li>Water gently and place in a warm, well-lit area.</li>
-          </ol>
-        </details>
-        <details>
-          <summary>How to Harvest Crops</summary>
-          <ol>
-            <li>Check for ripeness (e.g., color, firmness).</li>
-            <li>Use clean, sharp tools to avoid damaging plants.</li>
-            <li>Harvest in the morning for the best flavor.</li>
-          </ol>
-        </details>
-        <details>
-          <summary>How to Control Pests</summary>
-          <ol>
-            <li>Identify the type of pest (e.g., aphids, spider mites).</li>
-            <li>Use natural remedies like neem oil or insecticidal soap.</li>
-            <li>Remove affected leaves and keep the area clean.</li>
-            <li>Introduce beneficial insects like ladybugs if necessary.</li>
-          </ol>
-        </details>
-        <details>
-          <summary>How to Fertilize Plants</summary>
-          <ol>
-            <li>Choose a balanced fertilizer suitable for your plants.</li>
-            <li>Apply fertilizer every 4-6 weeks during the growing season.</li>
-            <li>Water the plants after fertilizing to help nutrients absorb.</li>
-            <li>Avoid over-fertilizing, as it can harm the plants.</li>
-          </ol>
-        </details>
-        <details>
-          <summary>How to Prune Plants</summary>
-          <ol>
-            <li>Use clean, sharp pruning shears.</li>
-            <li>Remove dead or diseased branches first.</li>
-            <li>Trim overgrown branches to maintain shape.</li>
-            <li>Prune during the plant's dormant season for best results.</li>
-          </ol>
-        </details>
-        <details>
-          <summary>How to Compost</summary>
-          <ol>
-            <li>Choose a compost bin or pile location.</li>
-            <li>Add a mix of green (e.g., vegetable scraps) and brown (e.g., dry leaves) materials.</li>
-            <li>Turn the compost regularly to aerate it.</li>
-            <li>Keep the compost moist but not soggy.</li>
-            <li>Wait 2-6 months for the compost to mature.</li>
-          </ol>
-        </details>
-      </div>
+        <div class="guides">
+            <h2>Step-by-Step Guides</h2>
+            <details>
+                <summary>How to Plant Seeds</summary>
+                <ol>
+                    <li>Choose the right soil mix for your plant.</li>
+                    <li>Fill seed trays with soil.</li>
+                    <li>Plant seeds at the recommended depth.</li>
+                    <li>Water gently and place in a warm, well-lit area.</li>
+                </ol>
+            </details>
+            <details>
+                <summary>How to Harvest Crops</summary>
+                <ol>
+                    <li>Check for ripeness (e.g., color, firmness).</li>
+                    <li>Use clean, sharp tools to avoid damaging plants.</li>
+                    <li>Harvest in the morning for the best flavor.</li>
+                </ol>
+            </details>
+            <details>
+                <summary>How to Control Pests</summary>
+                <ol>
+                    <li>Identify the type of pest (e.g., aphids, spider mites).</li>
+                    <li>Use natural remedies like neem oil or insecticidal soap.</li>
+                    <li>Remove affected leaves and keep the area clean.</li>
+                    <li>Introduce beneficial insects like ladybugs if necessary.</li>
+                </ol>
+            </details>
+            <details>
+                <summary>How to Fertilize Plants</summary>
+                <ol>
+                    <li>Choose a balanced fertilizer suitable for your plants.</li>
+                    <li>Apply fertilizer every 4-6 weeks during the growing season.</li>
+                    <li>Water the plants after fertilizing to help nutrients absorb.</li>
+                    <li>Avoid over-fertilizing, as it can harm the plants.</li>
+                </ol>
+            </details>
+            <details>
+                <summary>How to Prune Plants</summary>
+                <ol>
+                    <li>Use clean, sharp pruning shears.</li>
+                    <li>Remove dead or diseased branches first.</li>
+                    <li>Trim overgrown branches to maintain shape.</li>
+                    <li>Prune during the plant's dormant season for best results.</li>
+                </ol>
+            </details>
+            <details>
+                <summary>How to Compost</summary>
+                <ol>
+                    <li>Choose a compost bin or pile location.</li>
+                    <li>Add a mix of green (e.g., vegetable scraps) and brown (e.g., dry leaves) materials.</li>
+                    <li>Turn the compost regularly to aerate it.</li>
+                    <li>Keep the compost moist but not soggy.</li>
+                    <li>Wait 2-6 months for the compost to mature.</li>
+                </ol>
+            </details>
+        </div>
 
-      <div class="reminders">
-  <h2>Reminders</h2>
-  <div id="reminders-list">
-    <!-- Reminders will be dynamically added here -->
-  </div>
-  <form class="interactive-form" onsubmit="return false;">
-    <input type="text" id="new-reminder" placeholder="Add a new reminder...">
-    <input type="datetime-local" id="reminder-date">
-    <button type="submit" onclick="addReminder()">Add</button>
-  </form>
-</div>
+        <div class="reminders">
+            <h2>Reminders</h2>
+            <div id="reminders-list">
+                <!-- Reminders will be dynamically added here -->
+            </div>
+            <form class="interactive-form" onsubmit="return false;">
+                <input type="text" id="new-reminder" placeholder="Add a new reminder...">
+                <input type="datetime-local" id="reminder-date">
+                <button type="submit" onclick="addReminder()">Add</button>
+            </form>
+        </div>
     </div>
-  </div>
+</div>
 
+<script>
+    function sendMessage() {
+        const userInput = document.getElementById("user-input").value.trim();
+        const chatOutput = document.getElementById("chat-output");
+
+        if (userInput === "") return;
+
+        // Append user message
+        chatOutput.innerHTML += `<p><strong>You:</strong> ${userInput}</p>`;
+
+        // Send request to OpenAI via Flask
+        fetch("/askgpt", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ question: userInput })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.html) {
+                chatOutput.innerHTML += `<div>${data.html}</div>`;
+            } else {
+                chatOutput.innerHTML += `<p style='color:red;'>Error fetching response.</p>`;
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            chatOutput.innerHTML += `<p style='color:red;'>Failed to connect to the server.</p>`;
+        });
+
+        // Clear input field
+        document.getElementById("user-input").value = "";
+    }
+
+    // Attach event listener to enter key
+    document.getElementById("user-input").addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+            sendMessage();
+        }
+    });
+</script>
+
+<!--
   <script>
     // Chatbot Functionality
     function sendMessage() {
@@ -225,9 +267,9 @@ function removeReminder(index) {
   localStorage.setItem('reminders', JSON.stringify(reminders));
   loadReminders(); // Refresh the reminders list
 }
-</script>
+</script>-->
 
-  <style>
+<style>
     /* Global Styles */
     body {
       font-family: 'Poppins', sans-serif;
@@ -307,7 +349,7 @@ function removeReminder(index) {
 
     .chat-output {
       margin-top: 10px;
-      height: 150px;
+      height: 450px;
       overflow-y: auto;
       border: 1px solid #ddd;
       padding: 10px;
@@ -484,5 +526,5 @@ function removeReminder(index) {
       background: #cc0000;
       transform: translateY(-2px);
     }
-  </style>
+</style>
 {% endblock %}

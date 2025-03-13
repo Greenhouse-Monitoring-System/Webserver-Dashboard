@@ -5,6 +5,7 @@ import time
 import tomllib
 import requests
 import threading
+from gpt_openai import askGPT
 
 with open("config.toml", "rb") as f:
     config = tomllib.load(f)
@@ -66,7 +67,7 @@ def update_current_data():
             if response.status_code == 200:
                 # Save the latest data to current-data.json
                 sensor_data = response.json()
-                sensor_data['distance'] = round(sensor_data['distance'] * 100 / container_vol)
+                sensor_data['distance'] = 100 - round(sensor_data['distance'] * 100 / container_vol)
                 with open(currentData, 'w') as file:
                     json.dump(sensor_data, file, indent=4)
                 print("Updated current-data.json with new sensor readings:", sensor_data)
@@ -102,6 +103,16 @@ def simulator():
 @app.route("/assistant")
 def assistant():
     return render_template("assistant.html")
+
+@app.route("/askgpt", methods=["POST"])
+def askgpt():
+    user_question = request.json.get('question', '').strip()
+    if not user_question:
+        return jsonify({'error': 'Empty question'}), 400
+
+    response = askGPT(user_question)
+    print("Response from GPT:\n", response)
+    return jsonify({'html': response})
 
 @app.route("/greenhouse_home")
 def greenhouse():
