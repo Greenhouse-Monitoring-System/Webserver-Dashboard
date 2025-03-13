@@ -17,7 +17,9 @@ def askGPT(question):
                                              "journey where they can plant whatever plants and you help them through instructions"
                                              "and planting and tell them ideal environment for that plant."
                                              "Return the answer in HTML format (just the card part without the headers and html tag"
-                                             " and have the width of the card set to 100%) using the Bootstrap card layout."},
+                                             " and have the width of the card set to 100%) using the Bootstrap card layout."
+                                             "If the user talks about anything non related to greenhouse and farming, "
+                                             "try to pull them back to the theme"},
             {"role": "user", "content": question}
         ]
     )
