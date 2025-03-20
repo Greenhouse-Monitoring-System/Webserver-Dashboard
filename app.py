@@ -6,6 +6,8 @@ import tomllib
 import requests
 import threading
 from database import *
+from datetime import datetime, timedelta
+from collections import defaultdict
 
 with open("config.toml", "rb") as f:
     config = tomllib.load(f)
@@ -100,9 +102,114 @@ def config():
 def simulator():
     return render_template("simulator.html")
 
-@app.route("/statistics")
+@app.route("/statistics", methods=["GET", "POST"])
 def statistics():
-    return render_template("statistics.html", RETENTION_PERIOD=getAll_from_db())
+    # Define time ranges
+    end_date = datetime.now()
+
+    # Default timeframe if not selected
+    timeframe = request.form.get("timeframe", "3months")
+
+    # Set start_date and interval based on selected timeframe
+    if timeframe == "hour":
+        start_date = end_date - timedelta(hours=1)
+        interval = timedelta(minutes=10)  # Every 10 minutes
+        title = "Statistics - Last Hour (Every 10 Minutes)"
+        group_by = "minute"
+    elif timeframe == "week":
+        start_date = end_date - timedelta(weeks=1)
+        interval = timedelta(days=1)  # Every day
+        title = "Statistics - Last Week (Daily)"
+        group_by = "day"
+    else:  # Default to 3 months
+        start_date = end_date - timedelta(days=90)
+        interval = timedelta(weeks=1)  # Every week
+        title = "Statistics - Last 3 Months (Weekly)"
+        group_by = "week"
+
+    # Fetch all sensor data from the database
+    all_data = json.loads(getAll_from_db())
+
+    #Fake data for testing: 
+    # Simulate test data for the past 7 days (one entry per day)
+    all_data = [
+        {"timestamp": (end_date - timedelta(days=i)).strftime("%Y-%m-%d %H:%M:%S"),
+         "temperature": 20 + i,
+         "humidity": 50 + i,
+         "soil_moisture": 30 + i,
+         "light_level": 400 + i,
+         "distance": 5.0 + i,
+         "tvoc": 200 + i,
+         "co2": 300 + i}
+        for i in range(7)
+    ] + [
+        # Additional entries to cover the last few hours (testing past hour)
+        {"timestamp": (end_date - timedelta(hours=i)).strftime("%Y-%m-%d %H:%M:%S"),
+         "temperature": 22,
+         "humidity": 55,
+         "soil_moisture": 35,
+         "light_level": 350,
+         "distance": 5.2,
+         "tvoc": 210,
+         "co2": 310}
+        for i in range(5)
+    ]
+    # Debugging: Check the number of entries
+    print(f"Total data entries: {len(all_data)}")
+
+    # Filter data based on the selected timeframe
+    filtered_data = [
+        entry for entry in all_data
+        if datetime.strptime(entry["timestamp"], "%Y-%m-%d %H:%M:%S") >= start_date
+    ]
+
+    # Debugging: Check how many entries match the selected timeframe
+    print(f"Filtered data count: {len(filtered_data)}")
+    if filtered_data:
+        print(f"Filtered data: {filtered_data[:5]}")  # Print first 5 entries for inspection
+
+    # Group data based on selected timeframe (hour, day, week)
+    grouped_data = defaultdict(list)
+    for entry in filtered_data:
+        timestamp = datetime.strptime(entry["timestamp"], "%Y-%m-%d %H:%M:%S")
+        
+        # Group by the specified timeframe (hour, day, week)
+        if group_by == "minute":
+            # Round the timestamp to nearest 10 minutes
+            timestamp = timestamp.replace(second=0, microsecond=0)
+            timestamp = timestamp - timedelta(minutes=timestamp.minute % 10)
+        elif group_by == "day":
+            timestamp = timestamp.replace(hour=0, minute=0, second=0, microsecond=0)
+        else:
+            # Group by week (using Monday as the start of the week)
+            timestamp = timestamp - timedelta(days=timestamp.weekday())
+
+        grouped_data[timestamp].append(entry)
+
+    # Aggregate data: Take the **latest** entry of each group
+    aggregated_data = []
+    for group_start, entries in grouped_data.items():
+        latest_entry = max(entries, key=lambda x: datetime.strptime(x["timestamp"], "%Y-%m-%d %H:%M:%S"))
+
+        # Format the data with proper column names
+        formatted_entry = {
+            "Start Time": group_start.strftime("%Y-%m-%d %H:%M:%S"),
+            "Temperature": latest_entry.get("temperature", "N/A"),
+            "Humidity": latest_entry.get("humidity", "N/A"),
+            "Soil Moisture": latest_entry.get("soil_moisture", "N/A"),
+            "Light Level": latest_entry.get("light_level", "N/A"),
+            "Distance": latest_entry.get("distance", "N/A"),
+            "Tvoc": latest_entry.get("tvoc", "N/A"),
+            "Co2": latest_entry.get("co2", "N/A"),
+        }
+        aggregated_data.append(formatted_entry)
+
+    # Debugging: Check the final data
+    print(f"Aggregated data: {aggregated_data}")
+
+    # Pass cleaned data to the template
+    return render_template("statistics.html", data=aggregated_data, title=title)
+
 
 @app.route("/assistant")
 def assistant():

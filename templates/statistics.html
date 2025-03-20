@@ -1,86 +1,43 @@
 {% extends "base.html" %}
 
-{% block title %}Statistics{% endblock %}
+{% block title %}Greenhouse Statistics{% endblock %}
 
 {% block content %}
-    <h2>Greenhouse Statistics</h2>
-    <canvas id="statsChart"></canvas>
+    <h1 style="text-align: center; margin-bottom: 20px;">{{ title }}</h1>
 
-    <p><strong>Data Retention:</strong> Greenhouse condition data is saved for a period of {{ RETENTION_PERIOD }} days. Older data is automatically removed after this period to maintain system performance and keep the data relevant.</p>
+    <!-- Dropdown for selecting timeframes -->
+    <form method="POST" action="/statistics">
+        <label for="timeframe" style="margin-right: 10px;">Select Timeframe:</label>
+        <select name="timeframe" id="timeframe" onchange="this.form.submit()">
+            <option value="3months" {% if request.form['timeframe'] == '3months' %}selected{% endif %}>Last 3 Months (Weekly)</option>
+            <option value="week" {% if request.form['timeframe'] == 'week' %}selected{% endif %}>Last Week (Daily)</option>
+            <option value="hour" {% if request.form['timeframe'] == 'hour' %}selected{% endif %}>Last Hour (Every 10 Minutes)</option>
+        </select>
+    </form>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        async function fetchData() {
-            try {
-                const response = await fetch("/get_current");
-                const data = await response.json();
-                console.log(data);  // Log the data to the console to inspect it
-                return data.conditions;
-            } catch (error) {
-                console.error("Error fetching data:", error);
-                return null;
-            }
-        }
+    {% if data %}
+    <table style="width: 100%; border-collapse: collapse; margin: 0 auto; text-align: center;">
+        <thead>
+            <tr style="background-color: #4CAF50; color: white;">
+                <th style="padding: 10px; border: 1px solid #ddd;">Start Time</th>
+                {% for key in data[0].keys() if key != "Start Time" %}
+                <th style="padding: 10px; border: 1px solid #ddd;">{{ key.replace('_', ' ').title() }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in data %}
+            <tr style="background-color: {% if loop.index0 % 2 == 0 %}#f2f2f2{% else %}#ffffff{% endif %};">
+                <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">{{ entry["Start Time"] }}</td>
+                {% for key in entry.keys() if key != "Start Time" %}
+                <td style="padding: 8px; border: 1px solid #ddd;">{{ entry[key] }}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="text-align: center; color: red;">No data available for the selected timeframe.</p>
+    {% endif %}
 
-        async function renderChart() {
-            const conditions = await fetchData();
-            if (!conditions) {
-                console.log("No conditions data available.");
-                return;  // Exit if no data
-            }
-
-            console.log("Conditions data:", conditions);  // Log the conditions to check the data format
-
-            const ctx = document.getElementById("statsChart").getContext("2d");
-
-            new Chart(ctx, {
-                type: "line",
-                data: {
-                    labels: ["Now"],  // Static for now, update later
-                    datasets: [
-                        {
-                            label: "Temperature (°C)",
-                            data: [conditions.temperature],
-                            borderColor: "red",
-                            fill: false
-                        },
-                        {
-                            label: "Humidity (%)",
-                            data: [conditions.humidity],
-                            borderColor: "blue",
-                            fill: false
-                        },
-                        {
-                            label: "CO2 Levels",
-                            data: [conditions.co2],
-                            borderColor: "green",
-                            fill: false
-                        },
-                        {
-                            label: "Soil Moisture",
-                            data: [conditions.soilMoisture],
-                            borderColor: "brown",
-                            fill: false
-                        },
-                        {
-                            label: "TVOC",
-                            data: [conditions.tvoc],
-                            borderColor: "purple",
-                            fill: false
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        x: { title: { display: true, text: "Time" }},
-                        y: { title: { display: true, text: "Values" }}
-                    }
-                }
-            });
-        }
-
-        renderChart();
-    </script>
-
-    {% endblock %}
+{% endblock %}
