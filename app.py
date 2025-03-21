@@ -9,6 +9,7 @@ from database import *
 from datetime import datetime, timedelta
 from collections import defaultdict
 
+
 with open("config.toml", "rb") as f:
     config = tomllib.load(f)
 
