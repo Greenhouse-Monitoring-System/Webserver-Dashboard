@@ -105,8 +105,8 @@ def simulator():
 @app.route("/statistics", methods=["GET", "POST"])
 def statistics():
     # Define time ranges
-    end_date = datetime.now()
-
+    #end_date = datetime.now()
+    end_date = datetime(2025, 1, 23, 3, 59)
     # Default timeframe if not selected
     timeframe = request.form.get("timeframe", "3months")
 
@@ -130,32 +130,8 @@ def statistics():
     # Fetch all sensor data from the database
     all_data = json.loads(getAll_from_db())
 
-    #Fake data for testing: 
-    # Simulate test data for the past 7 days (one entry per day)
-    all_data = [
-        {"timestamp": (end_date - timedelta(days=i)).strftime("%Y-%m-%d %H:%M:%S"),
-         "temperature": 20 + i,
-         "humidity": 50 + i,
-         "soil_moisture": 30 + i,
-         "light_level": 400 + i,
-         "distance": 5.0 + i,
-         "tvoc": 200 + i,
-         "co2": 300 + i}
-        for i in range(7)
-    ] + [
-        # Additional entries to cover the last few hours (testing past hour)
-        {"timestamp": (end_date - timedelta(hours=i)).strftime("%Y-%m-%d %H:%M:%S"),
-         "temperature": 22,
-         "humidity": 55,
-         "soil_moisture": 35,
-         "light_level": 350,
-         "distance": 5.2,
-         "tvoc": 210,
-         "co2": 310}
-        for i in range(5)
-    ]
     # Debugging: Check the number of entries
-    print(f"Total data entries: {len(all_data)}")
+    print(f"First few entries: {all_data[:3]}")  # This will show the first 3 entries
 
     # Filter data based on the selected timeframe
     filtered_data = [
@@ -163,10 +139,8 @@ def statistics():
         if datetime.strptime(entry["timestamp"], "%Y-%m-%d %H:%M:%S") >= start_date
     ]
 
-    # Debugging: Check how many entries match the selected timeframe
-    print(f"Filtered data count: {len(filtered_data)}")
-    if filtered_data:
-        print(f"Filtered data: {filtered_data[:5]}")  # Print first 5 entries for inspection
+    # To track starting timestamp 
+    first_timestamp = None
 
     # Group data based on selected timeframe (hour, day, week)
     grouped_data = defaultdict(list)
@@ -181,9 +155,16 @@ def statistics():
         elif group_by == "day":
             timestamp = timestamp.replace(hour=0, minute=0, second=0, microsecond=0)
         else:
-            # Group by week (using Monday as the start of the week)
-            timestamp = timestamp - timedelta(days=timestamp.weekday())
-
+            # If first_timestamp is None, initialize it with the first timestamp
+            if first_timestamp is None:
+                first_timestamp = timestamp
+        
+            # Calculate the number of weeks since the first timestamp
+            weeks_since_first = (timestamp - first_timestamp).days // 7
+            
+            # Adjust timestamp to the start of the week for each 7-day interval
+            timestamp = first_timestamp + timedelta(weeks=weeks_since_first)
+        
         grouped_data[timestamp].append(entry)
 
     # Aggregate data: Take the **latest** entry of each group
@@ -196,8 +177,8 @@ def statistics():
             "Start Time": group_start.strftime("%Y-%m-%d %H:%M:%S"),
             "Temperature": latest_entry.get("temperature", "N/A"),
             "Humidity": latest_entry.get("humidity", "N/A"),
-            "Soil Moisture": latest_entry.get("soil_moisture", "N/A"),
-            "Light Level": latest_entry.get("light_level", "N/A"),
+            "Soil Moisture": latest_entry.get("soilMoisture", "N/A"),
+            "Light Level": latest_entry.get("lightLevel", "N/A"),
             "Distance": latest_entry.get("distance", "N/A"),
             "Tvoc": latest_entry.get("tvoc", "N/A"),
             "Co2": latest_entry.get("co2", "N/A"),
@@ -205,7 +186,7 @@ def statistics():
         aggregated_data.append(formatted_entry)
 
     # Debugging: Check the final data
-    print(f"Aggregated data: {aggregated_data}")
+    #print(f"Aggregated data: {aggregated_data}")
 
     # Pass cleaned data to the template
     return render_template("statistics.html", data=aggregated_data, title=title)
