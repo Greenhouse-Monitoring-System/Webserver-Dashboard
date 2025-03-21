@@ -104,13 +104,13 @@ def simulator():
 
 @app.route("/statistics", methods=["GET", "POST"])
 def statistics():
-    # Define time ranges
-    #end_date = datetime.now()
-    end_date = datetime(2025, 1, 23, 3, 59)
+    # sets current time
+    end_date = datetime.now()
+
     # Default timeframe if not selected
     timeframe = request.form.get("timeframe", "3months")
 
-    # Set start_date and interval based on selected timeframe
+    # Sets start_date and interval based on selected timeframe
     if timeframe == "hour":
         start_date = end_date - timedelta(hours=1)
         interval = timedelta(minutes=10)  # Every 10 minutes
@@ -129,9 +129,6 @@ def statistics():
 
     # Fetch all sensor data from the database
     all_data = json.loads(getAll_from_db())
-
-    # Debugging: Check the number of entries
-    print(f"First few entries: {all_data[:3]}")  # This will show the first 3 entries
 
     # Filter data based on the selected timeframe
     filtered_data = [
@@ -155,7 +152,7 @@ def statistics():
         elif group_by == "day":
             timestamp = timestamp.replace(hour=0, minute=0, second=0, microsecond=0)
         else:
-            # If first_timestamp is None, initialize it with the first timestamp
+            # If first_timestamp is None, initializes it with the first timestamp
             if first_timestamp is None:
                 first_timestamp = timestamp
         
@@ -178,15 +175,11 @@ def statistics():
             "Temperature": latest_entry.get("temperature", "N/A"),
             "Humidity": latest_entry.get("humidity", "N/A"),
             "Soil Moisture": latest_entry.get("soilMoisture", "N/A"),
-            "Light Level": latest_entry.get("lightLevel", "N/A"),
             "Distance": latest_entry.get("distance", "N/A"),
             "Tvoc": latest_entry.get("tvoc", "N/A"),
             "Co2": latest_entry.get("co2", "N/A"),
         }
         aggregated_data.append(formatted_entry)
-
-    # Debugging: Check the final data
-    #print(f"Aggregated data: {aggregated_data}")
 
     # Pass cleaned data to the template
     return render_template("statistics.html", data=aggregated_data, title=title)
