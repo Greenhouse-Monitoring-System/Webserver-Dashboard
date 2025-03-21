@@ -6,6 +6,9 @@ import tomllib
 import requests
 import threading
 from gpt_openai import askGPT
+from database import *
+from datetime import datetime, timedelta
+from collections import defaultdict
 
 with open("config.toml", "rb") as f:
     config = tomllib.load(f)
@@ -118,6 +121,100 @@ def askgpt():
 def greenhouse():
     conditions_data = load_currentData()
     return render_template("greenhouse.html", conditions= conditions_data)
+
+
+@app.route("/statistics", methods=["GET", "POST"])
+def statistics():
+    # sets current time
+    end_date = datetime.now()
+
+    # Default timeframe if not selected
+    timeframe = request.form.get("timeframe", "3months")
+
+    # Sets start_date and interval based on selected timeframe
+    if timeframe == "hour":
+        start_date = end_date - timedelta(hours=1)
+        interval = timedelta(minutes=10)  # Every 10 minutes
+        title = "Statistics - Last Hour (Every 10 Minutes)"
+        group_by = "minute"
+    elif timeframe == "week":
+        start_date = end_date - timedelta(weeks=1)
+        interval = timedelta(days=1)  # Every day
+        title = "Statistics - Last Week (Daily)"
+        group_by = "day"
+    else:  # Default to 3 months
+        start_date = end_date - timedelta(days=90)
+        interval = timedelta(weeks=1)  # Every week
+        title = "Statistics - Last 3 Months (Weekly)"
+        group_by = "week"
+
+    # Fetch all sensor data from the database
+    all_data = json.loads(getAll_from_db())
+
+    # Filter data based on the selected timeframe
+    filtered_data = [
+        entry for entry in all_data
+        if datetime.strptime(entry["timestamp"], "%Y-%m-%d %H:%M:%S") >= start_date
+    ]
+
+    # To track starting timestamp 
+    first_timestamp = None
+
+    # Group data based on selected timeframe (hour, day, week)
+    grouped_data = defaultdict(list)
+    for entry in filtered_data:
+        timestamp = datetime.strptime(entry["timestamp"], "%Y-%m-%d %H:%M:%S")
+        
+        # Group by the specified timeframe (hour, day, week)
+        if group_by == "minute":
+            # Round the timestamp to nearest 10 minutes
+            timestamp = timestamp.replace(second=0, microsecond=0)
+            timestamp = timestamp - timedelta(minutes=timestamp.minute % 10)
+        elif group_by == "day":
+            timestamp = timestamp.replace(hour=0, minute=0, second=0, microsecond=0)
+        else:
+            # If first_timestamp is None, initializes it with the first timestamp
+            if first_timestamp is None:
+                first_timestamp = timestamp
+        
+            # Calculate the number of weeks since the first timestamp
+            weeks_since_first = (timestamp - first_timestamp).days // 7
+            
+            # Adjust timestamp to the start of the week for each 7-day interval
+            timestamp = first_timestamp + timedelta(weeks=weeks_since_first)
+        
+        grouped_data[timestamp].append(entry)
+
+    # Aggregate data: Take the **latest** entry of each group
+    aggregated_data = []
+    for group_start, entries in grouped_data.items():
+        latest_entry = max(entries, key=lambda x: datetime.strptime(x["timestamp"], "%Y-%m-%d %H:%M:%S"))
+
+        # Format the data with proper column names
+        formatted_entry = {
+            "Start Time": group_start.strftime("%Y-%m-%d %H:%M:%S"),
+            "Temperature": latest_entry.get("temperature", "N/A"),
+            "Humidity": latest_entry.get("humidity", "N/A"),
+            "Soil Moisture": latest_entry.get("soilMoisture", "N/A"),
+            "Distance": latest_entry.get("distance", "N/A"),
+            "Tvoc": latest_entry.get("tvoc", "N/A"),
+            "Co2": latest_entry.get("co2", "N/A"),
+        }
+        aggregated_data.append(formatted_entry)
+
+    # Pass cleaned data to the template
+    return render_template("statistics.html", data=aggregated_data, title=title)
+
+
+@app.route("/assistant")
+def assistant():
+    return render_template("assistant.html")
+
+@app.route("/greenhouse_home")
+def greenhouse():
+    conditions_data = load_currentData()
+    return render_template("greenhouse.html", conditions= conditions_data)
+
 
 @app.route("/greenhouse/conditions", methods=["GET", "POST"])
 def display_conditions():
