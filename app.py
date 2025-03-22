@@ -107,7 +107,7 @@ def simulator():
 def statistics():
     # sets current time
     end_date = datetime.now()
-
+    
     # Default timeframe if not selected
     timeframe = request.form.get("timeframe", "3months")
 
@@ -182,9 +182,20 @@ def statistics():
         }
         aggregated_data.append(formatted_entry)
 
-    # Pass cleaned data to the template
-    return render_template("statistics.html", data=aggregated_data, title=title)
+    # extracting data for chart plotting
+    timestamps = [entry["Start Time"] for entry in aggregated_data]
+    temperature_values = [entry["Temperature"] for entry in aggregated_data]
+    humidity_values = [entry["Humidity"] for entry in aggregated_data]
+    soil_moisture_values = [entry["Soil Moisture"] for entry in aggregated_data]
+    distance_values = [entry["Distance"] for entry in aggregated_data]
+    tvoc_values = [entry["Tvoc"] for entry in aggregated_data]
+    co2_values = [entry["Co2"] for entry in aggregated_data]
 
+    # Pass ingall the chart data to the template
+    return render_template("statistics.html", data=aggregated_data, title=title,
+                        timestamps=timestamps, temperature_values=temperature_values,
+                        humidity_values=humidity_values, soil_moisture_values=soil_moisture_values,
+                        distance_values=distance_values, tvoc_values=tvoc_values, co2_values=co2_values)
 
 @app.route("/assistant")
 def assistant():
