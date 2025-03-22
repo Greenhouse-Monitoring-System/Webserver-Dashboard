@@ -6,4 +6,7 @@ CONDITIONS="conditions.json"
 DATA="current-data.json"
 
 [static]
-CONTAINER = 15
+CONTAINER = 8
+
+[API]
+GPTAPI = "API"

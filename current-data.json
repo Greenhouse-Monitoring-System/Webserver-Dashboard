@@ -1,9 +1,9 @@
 {
     "co2": 0.0,
-    "distance": 36,
-    "humidity": 41.0,
+    "distance": -23,
+    "humidity": 19.0,
     "soilMoisture": 1,
-    "temperature": 19.0,
-    "timestamp": "2025-01-16 22:15:52",
+    "temperature": 21.0,
+    "timestamp": "2025-01-17 11:25:19",
     "tvoc": 400.0
 }
