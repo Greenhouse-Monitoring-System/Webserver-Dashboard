@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Greenhouse Statistics{% endblock %}
+
+{% block content %}
+    <h1 style="text-align: center; margin-bottom: 20px;">{{ title }}</h1>
+
+    <!-- Dropdown for selecting timeframes -->
+    <form method="POST" action="/statistics">
+        <label for="timeframe" style="margin-right: 10px;">Select Timeframe:</label>
+        <select name="timeframe" id="timeframe" onchange="this.form.submit()">
+            <option value="3months" {% if request.form['timeframe'] == '3months' %}selected{% endif %}>Last 3 Months (Weekly)</option>
+            <option value="week" {% if request.form['timeframe'] == 'week' %}selected{% endif %}>Last Week (Daily)</option>
+            <option value="hour" {% if request.form['timeframe'] == 'hour' %}selected{% endif %}>Last Hour (Every 10 Minutes)</option>
+        </select>
+    </form>
+
+    {% if data %}
+    <table style="width: 100%; border-collapse: collapse; margin: 0 auto; text-align: center;">
+        <thead>
+            <tr style="background-color: #4CAF50; color: white;">
+                <th style="padding: 10px; border: 1px solid #ddd;">Start Time</th>
+                {% for key in data[0].keys() if key != "Start Time" %}
+                <th style="padding: 10px; border: 1px solid #ddd;">{{ key.replace('_', ' ').title() }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in data %}
+            <tr style="background-color: {% if loop.index0 % 2 == 0 %}#f2f2f2{% else %}#ffffff{% endif %};">
+                <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">{{ entry["Start Time"] }}</td>
+                {% for key in entry.keys() if key != "Start Time" %}
+                <td style="padding: 8px; border: 1px solid #ddd;">{{ entry[key] }}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="text-align: center; color: red;">No data available for the selected timeframe.</p>
+    {% endif %}
+
+{% endblock %}
